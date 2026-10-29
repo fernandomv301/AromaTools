@@ -1,0 +1,38 @@
+site_name: AromaTools Docs
+
+theme:
+  name: material
+  logo: images/group.png
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - toc.integrate
+    - content.code.copy
+    - content.tabs.link
+
+nav:
+  - Home: index.md
+
+  - Installation: installation.md
+
+  - AroGeometric: arogeometric.md
+
+  - AroMagnetic: aromagnetic.md
+
+  - FAQ: faq.md
+
+markdown_extensions:
+  - attr_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.tabbed:
+      alternate_style: true
+ 
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+

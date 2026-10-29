@@ -1,0 +1,867 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../arogeometric/">
+      
+      
+        <link rel="next" href="../faq/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>AroMagnetic - AromaTools Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#aromagnetic" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="AromaTools Documentation" class="md-header__button md-logo" aria-label="AromaTools Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AromaTools Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              AroMagnetic
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="AromaTools Documentation" class="md-nav__button md-logo" aria-label="AromaTools Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    AromaTools Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arogeometric/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AroGeometric
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AroMagnetic
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AroMagnetic
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#capabilities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Capabilities
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Capabilities">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#automation-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automation features
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#general-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        General workflow
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#grid-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Grid module
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Grid module">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#input-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#profile-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Profile module
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Profile module">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#input-format_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nics-scan-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NICS-scan module
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NICS-scan module">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#input-format_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interfaz-with-orca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interfaz with Orca
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Interfaz with Orca">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#orca-section" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Orca section
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-run-aromagnetic" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How to run AroMagnetic?
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../faq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="aromagnetic">AroMagnetic</h1>
+<p>AroMagnetic is a Python toolkit for evaluating <strong>magnetic criteria of aromaticity</strong> from quantum chemistry calculations.</p>
+<p>The program automates the generation of ghost atom grids, reconstruction of the induced magnetic field (Bind), calculation of NICS-based descriptors, ring-current strength evaluation, and molecular orbital decomposition of magnetic response properties.</p>
+<p>AroMagnetic integrates workflows typically performed manually when using Gaussian or ORCA.</p>
+<hr />
+<h2 id="capabilities">Capabilities</h2>
+<p>AroMagnetic implements the following magnetic descriptors:</p>
+<ul>
+<li><span class="arithmatex">\(B^{ind}_{z}\)</span> (induced magnetic field)</li>
+<li>NICS-SP</li>
+<li>NICS-scan</li>
+<li>NICS-2D</li>
+<li>NICS-3D</li>
+<li>INICS (integral NICS)</li>
+<li>Ring current strength (Ampere–Maxwell law)</li>
+<li>MO decomposition of magnetic response (only with Gaussian)</li>
+<li>pseudo-π model</li>
+</ul>
+<h3 id="automation-features">Automation features</h3>
+<ul>
+<li>Automatic grid construction</li>
+<li>Automatic molecular orientation</li>
+<li>Automatic ring detection</li>
+<li>Symmetry-adapted grid reduction</li>
+<li>Automatic cube generation</li>
+<li>cube → vtk conversion</li>
+<li>Numerical integration of profiles</li>
+<li>Algebra with scalar fields (cube/vtk)</li>
+</ul>
+<hr />
+<h2 id="general-workflow">General workflow</h2>
+<p>AroMagnetic operates using an input file:</p>
+<div class="highlight"><pre><span></span><code>INPUT.txt
+</code></pre></div>
+<p>Typical workflow:  </p>
+<ul>
+<li>Prepare calcuation inputs</li>
+<li>Run Gaussian or Orca</li>
+<li>Analyze magnetic response</li>
+</ul>
+<h2 id="grid-module">Grid module</h2>
+<h3 id="input-format">Input format</h3>
+<div class="highlight"><pre><span></span><code># ================================
+#        AroMagnetic INPUT
+# ================================
+
+# --------------------------------
+# General Information
+# --------------------------------
+
+NAME_MOLECULE             mol
+PROGRAM                   Gaussian            # ORCA or GAUSSIAN
+KEYWORD_LINE              Functional/Basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC
+
+PROCS                     16 #If you use Orca this value doesn&#39;t apear in the input files
+MEMORY_GB                 32
+
+CHARGE                    0
+MULTIPLICITY              1
+
+MOLECULAR_COORDINATES     mol.xyz
+PSEUDO_PI                 NO              # YES or NO
+
+
+# --------------------------------
+# Module Switchboard
+# --------------------------------
+# Turn ON only what you need.
+
+GRID_MODULE                 ON
+PROFILE_MODULE             OFF
+NICS_SCAN_XY_MODULE        OFF
+
+
+# --------------------------------
+# Grid (Grid generation)
+# --------------------------------
+# Required if GRID_MODULE = ON
+
+BEGIN_GRID
+
+GA_MAX            80               # Maximum number of ghost atoms per input
+EXTERNAL_FIELD    0.0 0.0 1.0      # Bx By Bz
+NUM_POINTS        19 19 19         # Nx Ny Nz
+GRID_MARGIN       2.0              # Å
+VTK_FILES         YES              # YES or NO
+
+END_GRID
+</code></pre></div>
+<h2 id="profile-module">Profile module</h2>
+<h3 id="input-format_1">Input format</h3>
+<div class="highlight"><pre><span></span><code># ================================
+#        AroMagnetic INPUT
+# ================================
+
+# --------------------------------
+# General Information
+# --------------------------------
+
+NAME_MOLECULE             mol
+PROGRAM                   Gaussian            # ORCA or GAUSSIAN
+KEYWORD_LINE              Functional/Basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC
+
+PROCS                     16 #If you use Orca this value doesn&#39;t apear in the input files
+MEMORY_GB                 32
+
+CHARGE                    0
+MULTIPLICITY              1
+
+MOLECULAR_COORDINATES     mol.xyz
+PSEUDO_PI                 NO              # YES or NO
+
+
+# --------------------------------
+# Module Switchboard
+# --------------------------------
+# Turn ON only what you need.
+
+GRID_MODULE                OFF
+PROFILE_MODULE             ON
+NICS_SCAN_XY_MODULE        OFF
+
+# --------------------------------
+# Profile (1D normal to ring)
+# --------------------------------
+# Required if PROFILE_MODULE = ON
+#
+# Linear scale requires:
+#   START, DELTA_Z, NUM_GA
+#
+# Logarithmic scale requires:
+#   START, END, NUM_GA
+
+BEGIN_PROFILE
+
+SCALE       Linear               # Linear or Logarithmic
+
+START       0.0
+DELTA_Z     0.1
+NUM_GA      100
+
+# Only for Logarithmic scale:
+# END      5.0
+
+END_PROFILE
+</code></pre></div>
+<h2 id="nics-scan-module">NICS-scan module</h2>
+<h3 id="input-format_2">Input format</h3>
+<div class="highlight"><pre><span></span><code># ================================
+#        AroMagnetic INPUT
+# ================================
+
+# --------------------------------
+# General Information
+# --------------------------------
+
+NAME_MOLECULE             mol
+PROGRAM                   Gaussian            # ORCA or GAUSSIAN
+KEYWORD_LINE              Functional/Basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC
+
+PROCS                     16 #If you use Orca this value doesn&#39;t apear in the input files
+MEMORY_GB                 32
+
+CHARGE                    0
+MULTIPLICITY              1
+
+MOLECULAR_COORDINATES     mol.xyz
+PSEUDO_PI                 NO              # YES or NO
+
+
+# --------------------------------
+# Module Switchboard
+# --------------------------------
+# Turn ON only what you need.
+
+GRID_MODULE                OFF
+PROFILE_MODULE             OFF
+NICS_SCAN_XY_MODULE        ON
+
+# --------------------------------
+# NICS Scan XY (Transversal scan)
+# --------------------------------
+# Required if NICS_SCAN_XY_MODULE = ON
+#
+# If both POINTS and DELTA_X are defined:
+#   Code checks consistency. If inconsistent → error.
+
+BEGIN_NICS_SCAN_XY
+
+POINTS        81
+MARGIN        2.0
+HEIGHT        0.0 1.0 1.5
+DELTA_X       0.1
+
+MAKE_AXIS_Y   YES            # YES or NO
+
+END_NICS_SCAN_XY
+</code></pre></div>
+<h2 id="interfaz-with-orca">Interfaz with Orca</h2>
+<h3 id="orca-section">Orca section</h3>
+<div class="highlight"><pre><span></span><code># --------------------------------
+# ORCA Block (Optional)
+# --------------------------------
+# Used only if PROGRAM = ORCA.
+# If present, this block overrides PROCS/MEMORY_GB
+# and adds advanced ORCA-specific settings.
+
+BEGIN_ORCA_BLOCK
+
+%pal
+  nprocs 16
+end
+
+%maxcore 32000
+
+END_ORCA_BLOCK
+</code></pre></div>
+<h2 id="how-to-run-aromagnetic">How to run AroMagnetic?</h2>
+<ol>
+<li>Prepare your <code>INPUT.txt</code> file and your molecular structure file (XYZ format).<ul>
+<li>If you are using generic databases in your calculations, you must create the <em>basis.txt</em> file and enter your database, leaving two spaces at the end of the file.</li>
+</ul>
+</li>
+<li>Generate the quantum chemistry input files:
+<div class="highlight"><pre><span></span><code>work_amg
+</code></pre></div></li>
+<li>Run the generated input files using Gaussian or ORCA.</li>
+<li>Once the calculations are finished, analyze the results:
+<div class="highlight"><pre><span></span><code>analyze_amg
+</code></pre></div>
+This command generates .cube files (and .vtk files if selected in INPUT.txt), .csv files and/or graph, depending on the module you've chosen.</li>
+</ol>
+<p><strong>Molecular orbital decomposition of the shielding tensor (Gaussian only)</strong></p>
+<p>To compute molecular orbital contributions to the shielding tensor, follow these steps (This module works with NBO6).</p>
+<ol>
+<li>Include the following keywords in the KEYWORD_LINE section of your INPUT.txt:
+<div class="highlight"><pre><span></span><code>functional/basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC POP=NBO6read
+</code></pre></div></li>
+<li>Generate the Gaussian input files:
+<div class="highlight"><pre><span></span><code>work_amg
+</code></pre></div></li>
+<li>Run the Gaussian calculations.</li>
+<li>After the calculations are completed, perform the molecular orbital analysis:
+<div class="highlight"><pre><span></span><code>mo_amg
+</code></pre></div></li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.expand", "navigation.top", "toc.integrate", "content.code.copy", "content.tabs.link"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

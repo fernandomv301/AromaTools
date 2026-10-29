@@ -1,0 +1,4 @@
+[console_scripts]
+amg = aromatools.aromagnetic.aromagnetic:main
+arogeometric = aromatools.arogeometric.arogeometric:main
+aromagnetic = aromatools.aromagnetic.aromagnetic:main

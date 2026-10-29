@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aromatools"
+version = "0.2.47"
+description = "Tools for aromaticity evaluation"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+  { name = "Fernando Martínez-Villarino" },
+  { name = "Mesías Orozco-Ic" },
+  { name = "Gabriel Merino" }
+]
+dependencies = [
+  "numpy",
+  "matplotlib",
+  "ase",
+  "pymatgen",
+  "networkx"
+]
+
+[project.scripts]
+amg        = "aromatools.aromagnetic.aromagnetic:main"
+aromagnetic = "aromatools.aromagnetic.aromagnetic:main"
+arogeometric = "aromatools.arogeometric.arogeometric:main"

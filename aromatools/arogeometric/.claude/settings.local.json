@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/fer12nat/Library/CloudStorage/OneDrive-CINVESTAV/datos_adjuntos/doctorado/AromaTools/aromatools/**)",
+      "Bash(find /Users/fer12nat/Library/CloudStorage/OneDrive-CINVESTAV/datos_adjuntos/doctorado/AromaTools/ -name \"pyproject.toml\" | head -3)"
+    ]
+  }
+}
