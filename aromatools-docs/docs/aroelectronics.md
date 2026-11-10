@@ -11,7 +11,7 @@ AroElectronics **does not reimplement the indices**: it imports from [ESIpy](htt
 Electronic indices are built from the **delocalization index** (DI) between pairs of atoms,
 
 $$
-\delta(A,B) = 4\,\mathrm{Tr}\left(\mathbf{S}^{A}\mathbf{S}^{B}\right)
+\delta(A,B)=4\, \sum_{i,j}\mathbf{S}_{ij}^{A}\mathbf{S}_{ij}^{B}
 $$
 
 where $\mathbf{S}^{A}$ is the atomic overlap matrix (AOM) of atom $A$ in the basis of the occupied molecular orbitals. The AOMs depend on how an atom in the molecule is defined, so **the value of every index depends on the chosen partition** (see [Partitions](#partitions)).
@@ -36,7 +36,18 @@ AroElectronics automatically:
 | FLU | Aromatic fluctuation index | **Lower** is more aromatic (0 = ideal) |
 | AV1245 | Average of the 4-center indices of 1-2-4-5 fragments | Higher is more aromatic |
 | AVmin | Minimum of the 4-center indices | Higher is more aromatic |
-| BOA, BOAc | Bond-order alternation: difference between the DI of consecutive bonds of the ring (the electronic counterpart of BLA) | **Lower** is more aromatic (0 = full equalization) |
+| BOA | Bond-order alternation: difference between the mean DI of the alternate bonds of the ring | **Lower** is more aromatic (0 = full equalization) |
+| BOAc | Variant of BOA built from the difference between **consecutive** bonds (see below) | **Lower** is more aromatic (0 = full equalization) |
+
+**BOA and BOAc.** Both are the electronic counterpart of the bond-length alternation (BLA), using the DI of the bonds of the ring, $\delta_i = \delta(A_i, A_{i+1})$, instead of the bond lengths:
+
+$$
+BOA = \left| \frac{1}{n_1}\sum_{i\ \mathrm{odd}} \delta_i - \frac{1}{n_2}\sum_{i\ \mathrm{even}} \delta_i \right|
+\qquad
+BOA_c = \frac{1}{n}\sum_{i=1}^{n} \left| \delta_i - \delta_{i+1} \right|
+$$
+
+BOA compares the two sets of alternate bonds, so it can vanish when the bonds alternate in a pattern that cancels out in the averages, and it is not well defined for rings with an odd number of atoms. BOAc compares each bond with the next one around the ring, so it detects any irregularity and is valid for rings of any size. In a perfectly regular ring both are zero.
 
 Iring, MCI and AV1245 are reported also in the normalized form $x^{1/n}$, where $n$ is the number of atoms of the ring, so that rings of different size can be compared.
 
