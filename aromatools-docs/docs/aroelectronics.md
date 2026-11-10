@@ -11,10 +11,10 @@ AroElectronics **does not reimplement the indices**: it imports from [ESIpy](htt
 Electronic indices are built from the **delocalization index** (DI) between pairs of atoms,
 
 $$
-\delta(A,B)=4\, \sum_{i,j}\mathbf{S}_{ij}^{A}\mathbf{S}_{ij}^{B}
+\delta(A,B)=4\, \sum_{i,j}{S}_{ij}\left({A}\right){S}_{ij}\left({B}\right)
 $$
 
-where $\mathbf{S}^{A}$ is the atomic overlap matrix (AOM) of atom $A$ in the basis of the occupied molecular orbitals. The AOMs depend on how an atom in the molecule is defined, so **the value of every index depends on the chosen partition** (see [Partitions](#partitions)).
+where ${S}^{A}$ is the atomic overlap matrix (AOM) of atom $A$ in the basis of the occupied molecular orbitals. The AOMs depend on how an atom in the molecule is defined, so **the value of every index depends on the chosen partition** (see [Partitions](#partitions)).
 
 AroElectronics automatically:
 
