@@ -45,7 +45,19 @@ Interpretation:
 
 ### Electronic Criteria (AroElectronics)
 
-Coming soon...
+- Iring (multicenter bond index)
+- MCI (multicenter index)
+- PDI (para-delocalization index)
+- FLU (aromatic fluctuation index)
+- AV1245 and AVmin
+
+The indices are computed with ESIpy from a PySCF calculation or from a
+wavefunction file (.fchk, .molden), using the meta-Löwdin, NAO, IAO,
+Löwdin or Mulliken atomic partitions:
+
+```bash
+aroelectronics INPUT.txt
+```
 
 ---
 

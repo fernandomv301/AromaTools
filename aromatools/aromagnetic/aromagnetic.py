@@ -47,7 +47,10 @@ antiaromaticity and magnetic response in molecular systems.
 Developed by:
 
    Fernando Martínez-Villarino
+   Joan Grebol-Tomas
+   Pedro Salvador
    Mesías Orozco-Ic
+   Eduard Matito
    Gabriel Merino
 
    Cinvestav - Merida
@@ -57,7 +60,7 @@ Developed by:
 ----------------------------------------------------------------------
 Citation:
 
-   Martinez-Villarino, F.; Orozco-Ic, M.; Merino, G.
+   Martinez-Villarino, F.; Grebol-Tomas, J.; Salvador, P.; Orozco-Ic, M.; Matito, E.; Merino, G.
    AromaTools 1.0, Cinvestav Merida, Merida, Mexico, 2025.
 
 ----------------------------------------------------------------------

@@ -4,11 +4,11 @@
 
 # AromaTools (version 1.0)
 
-**AromaTools** is a computational toolkit designed to facilitate the analysis of aromaticity using complementary geometric and magnetic criteria.
+**AromaTools** is a computational toolkit designed to facilitate the analysis of aromaticity using complementary geometric, magnetic and electronic criteria.
 
 The software integrates widely used descriptors into a unified and user-friendly workflow, allowing researchers to evaluate aromatic behavior in molecular systems in a reproducible and systematic manner.
 
-Aromaticity is not a directly observable physical property, but rather a conceptual framework inferred from different manifestations of electron delocalization. Because no single descriptor fully captures this phenomenon, reliable analysis typically requires the combined use of multiple criteria. AromaTools aims to simplify this process by providing automated workflows for the calculation and analysis of aromaticity indices derived from molecular structure and magnetic response.
+Aromaticity is not a directly observable physical property, but rather a conceptual framework inferred from different manifestations of electron delocalization. Because no single descriptor fully captures this phenomenon, reliable analysis typically requires the combined use of multiple criteria. AromaTools aims to simplify this process by providing automated workflows for the calculation and analysis of aromaticity indices derived from molecular structure, magnetic response and electron delocalization.
 
 ---
 
@@ -35,9 +35,18 @@ AromaTools integrates multiple descriptors commonly used to characterize aromati
 - Pseudo-π model implementation for π-electron magnetic response analysis  
 - Generation of scalar fields (.cube) and visualization grids (.vtk)  
 
-These descriptors provide complementary perspectives on electron delocalization in cyclic systems.
+**Electronic criteria**  
 
-Each module can be used independently for a more complete characterization of aromatic behavior.
+- Iring (multicenter bond index)  
+- MCI (multicenter index)  
+- PDI (para-delocalization index)  
+- FLU (aromatic fluctuation index)  
+- AV1245 and AVmin  
+- BOA (bond-order alternation)  
+- Atomic partitions: meta-Löwdin, NAO, IAO, Löwdin, Mulliken and QTAIM (from AIMAll files)  
+- Wavefunction from PySCF or from a file (.fchk, .molden and other formats readable by IOData)  
+
+These descriptors provide complementary perspectives on electron delocalization in cyclic systems.
 
 ---
 
@@ -73,31 +82,44 @@ The software is particularly suited for studies involving:
 - Heterocycles
 - Excited-state aromaticity
 - Magnetic response analysis
-- Comparative aromaticity studies
 
 ---
 
 ## Developers
 
 - **Fernando Martínez-Villarino**  
-Computational Physical Chemistry
+Computational Physical Chemistry  
 Doctoral student in Cinvestav - Mérida, México
 
+- **Joan Grebol-Tomas**  
+Computational Chemistry  
+Doctoral student in Universitat de Girona - Girona, España
+
 - **Mesías Orozco-Ic**  
-Computational Physical Chemistry
+Computational Physical Chemistry  
 Posdoctoral researcher in Cinvestav - Mérida, México
 
+- **Pedro Salvador**  
+Computational Chemistry  
+Research professor in Universitat de Girona - Girona, España
+
+- **Eduard Matito**  
+Computational Chemistry  
+Research professor in Donostia International Physics Center - Donostia, España
+
 - **Gabriel Merino**  
-Computational Physical Chemistry
-Researcher in Cinvestav - Mérida, México
+Computational Physical Chemistry  
+Researcher professor in Cinvestav - Mérida, México
 
 ---
 
 ## Citation
 
+AromaTools integrates methods developed by different research groups. Each method and the work in which it was proposed are listed in [Methods and references](methods.md); please cite them together with AromaTools.
+
 If you use AromaTools in your research, please cite:
 
-Martínez-Villarino, F.; Orozco-Ic, M.; Merino, G. AromaTools 1.0, Cinvestav Mérida, Mérida, Mexico, 2025.
+Martínez-Villarino, F.; Grebol-Tomas, J.; Salvador, P.; Orozco-Ic, M.; Matito, E.; Merino, G. AromaTools 1.0, Cinvestav - DIPC, Mérida, Mexico, 2026.
 
 ---
 
@@ -111,7 +133,6 @@ Planned improvements for upcoming versions include:
 
 - Detection of equivalent rings to reduce computational cost
 - Multi-system HOMA index calculation
-- Improve user interfaz
 
 **AroMagnetic**
 
@@ -127,17 +148,9 @@ These developments aim to improve the interpretation of magnetic response descri
 
 ---
 
-**AroElectrinics**
+**AroElectronics**
 
-Work is also in progress to incorporate **electronic aromaticity criteria**, enabling a more comprehensive evaluation of electron delocalization.
-
-The inclusion of electronic criteria will allow AromaTools to provide a unified framework combining:
-
-- Geometric criteria
-- Magnetic criteria
-- Electronic criteria
-
-This integration is expected to improve consistency between different aromaticity criteria and provide deeper insight into the nature of cyclic electron delocalization.
+The electronic criteria are now available in the AroElectronics module, which allows AromaTools to provide a unified framework combining geometric, magnetic and electronic criteria. This integration helps to compare the different aromaticity criteria and provides deeper insight into the nature of cyclic electron delocalization.
 
 ---
 

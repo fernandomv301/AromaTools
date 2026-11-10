@@ -35,6 +35,10 @@ evidence of electron delocalization in cyclic molecules.
 Developed by:
 
    Fernando Martínez-Villarino
+   Joan Grebol-Tomas
+   Pedro Salvador
+   Mesías Orozco-Ic
+   Eduard Matito
    Gabriel Merino
 
    Cinvestav – Mérida
@@ -43,7 +47,7 @@ Developed by:
 ----------------------------------------------------------------------
 Citation:
 
-   Martínez-Villarino, F.; Orozco-Ic, M.; Merino, G.
+   Martínez-Villarino, F.; Grebol-Tomas, J.; Salvador, P.; Orozco-Ic, M.; Matito, E.; Merino, G.
    AromaTools 1.0, Cinvestav Mérida, Mérida, Mexico, 2025.
 
 ======================================================================

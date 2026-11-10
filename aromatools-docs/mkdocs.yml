@@ -20,6 +20,10 @@ nav:
 
   - AroMagnetic: aromagnetic.md
 
+  - AroElectronics: aroelectronics.md
+
+  - Methods and references: methods.md
+
   - FAQ: faq.md
 
 markdown_extensions:

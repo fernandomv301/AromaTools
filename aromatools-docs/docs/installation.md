@@ -8,7 +8,7 @@ pip install aromatools
 
 ## Requirements
 
-Python 3.10+
+Python 3.9+
 
 Required libraries:
 
@@ -19,5 +19,7 @@ Required libraries:
 - plotly
 - ase
 - pymatgen
+- esipy (AroElectronics)
+- pyscf (AroElectronics, calculations from scratch)
 
 ---

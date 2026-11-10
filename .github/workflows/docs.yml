@@ -1,0 +1,62 @@
+name: Publish documentation
+
+# Every push to main that changes the manual rebuilds the site and publishes it on GitHub Pages.
+#
+# On/off switch for the manual:
+#   Settings > Secrets and variables > Actions > Variables > DOCS_PUBLIC
+#     DOCS_PUBLIC = true            -> the real manual is published
+#     DOCS_PUBLIC = false or unset  -> only a placeholder page ("in preparation") is published
+# After changing the variable, apply it with Actions > "Publish documentation" > Run workflow
+# (a new push to main also applies it).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "aromatools-docs/**"
+      - ".github/workflows/docs.yml"
+      - ".github/docs-placeholder.html"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DOCS_PUBLIC: ${{ vars.DOCS_PUBLIC }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build the manual, or a placeholder page when DOCS_PUBLIC is not "true"
+        run: |
+          if [ "$DOCS_PUBLIC" = "true" ]; then
+            pip install -r aromatools-docs/requirements.txt
+            mkdocs build -f aromatools-docs/mkdocs.yml
+          else
+            echo "DOCS_PUBLIC is not 'true': publishing the placeholder page."
+            mkdir -p aromatools-docs/site
+            cp .github/docs-placeholder.html aromatools-docs/site/index.html
+          fi
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: aromatools-docs/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
