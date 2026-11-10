@@ -50,20 +50,20 @@ AroElectronics **does not reimplement the electronic indices**. It imports from 
 | PDI | Para-delocalization index (six-membered rings) | [27] |
 | FLU | Aromatic fluctuation index | [28] |
 | AV1245 and AVmin | Average and minimum of the four-center indices of atoms 1-2-4-5 of the ring, for large rings | [29] |
-| BOA | Bond-order alternation, the electronic counterpart of BLA (uses the DI instead of the bond length). | [30] |
+| BOA | Bond-order alternation, the electronic counterpart of BLA (uses the DI instead of the bond length). | [6] |
 
 **Atomic partitions**
 
 | `PARTITION` | References |
 |-------------|------------|
-| `mulliken` | [31] |
-| `lowdin` | [32] |
-| `meta-lowdin` | [33] |
-| `nao` | [34] |
-| `iao` | [35] |
-| `qtaim` | Bader's Quantum Theory of Atoms in Molecules [36]; the AOMs are obtained with AIMAll [37] |
+| `mulliken` | [30] |
+| `lowdin` | [31] |
+| `meta-lowdin` | [32] |
+| `nao` | [33] |
+| `iao` | [34] |
+| `qtaim` | Bader's Quantum Theory of Atoms in Molecules [35]; the AOMs are obtained with AIMAll [36] |
 
-PySCF [38] is used to run the calculations from scratch, and wavefunction files are read with IOData [39].
+PySCF [37] is used to run the calculations from scratch, and wavefunction files are read with IOData [38].
 
 ---
 
@@ -74,7 +74,7 @@ PySCF [38] is used to run the calculations from scratch, and wavefunction files 
 3. Krygowski, T. M.; Cyrański, M. K. Structural aspects of aromaticity. *Chem. Rev.* **2001**, *101*, 1385–1419.
 4. Arpa, E. M.; Stafström, S.; Durbeej, B. HOMAc: A Parameterization of the Harmonic Oscillator Model of Aromaticity (HOMA) That Includes Antiaromaticity. *J. Org. Chem.* **2025**, *90*, 1297–1308.
 5. Arpa, E. M.; Durbeej, B. HOMER: a reparameterization of the harmonic oscillator model of aromaticity (HOMA) for excited states. *Phys. Chem. Chem. Phys.* **2023**, *25*, 16763.
-6. Casademont-Reig, I.; Ramos-Cordoba, E.; Torrent-Sucarrat, M.; Matito, E. Aromaticity descriptors based on electron delocalization. In *Aromaticity: Modern Computational Methods and Applications*; Elsevier, 2021; Chapter 7. DOI: 10.1016/C2019-0-04193-3.
+6. Casademont-Reig, I.; Ramos-Cordoba, E.; Torrent-Sucarrat, M.; Matito, E. How do the Hückel and Baird Rules Fade Away in Annulenes? *Molecules* **2020**, *25*, 711.
 7. Schleyer, P. v. R.; Maerker, C.; Dransfeld, A.; Jiao, H.; van Eikema Hommes, N. J. R. Nucleus-Independent Chemical Shifts: A Simple and Efficient Aromaticity Probe. *J. Am. Chem. Soc.* **1996**, *118*, 6317–6318.
 8. Chen, Z.; Wannere, C. S.; Corminboeuf, C.; Puchta, R.; Schleyer, P. v. R. Nucleus-Independent Chemical Shifts (NICS) as an Aromaticity Criterion. *Chem. Rev.* **2005**, *105*, 3842–3888.
 9. Stanger, A. Nucleus-Independent Chemical Shifts (NICS): Distance Dependence and Revised Criteria for Aromaticity and Antiaromaticity. *J. Org. Chem.* **2006**, *71*, 883–893.
@@ -98,13 +98,12 @@ PySCF [38] is used to run the calculations from scratch, and wavefunction files 
 27. Poater, J.; Fradera, X.; Duran, M.; Solà, M. The Delocalization Index as an Electronic Aromaticity Criterion: Application to a Series of Planar Polycyclic Aromatic Hydrocarbons. *Chem. Eur. J.* **2003**, *9*, 400–406.
 28. Matito, E.; Duran, M.; Solà, M. The aromatic fluctuation index (FLU): A new aromaticity index based on electron delocalization. *J. Chem. Phys.* **2005**, *122*, 014109.
 29. Matito, E. An electronic aromaticity index for large rings. *Phys. Chem. Chem. Phys.* **2016**, *18*, 11839–11846.
-30. Casademont-Reig, I.; Ramos-Cordoba, E.; Torrent-Sucarrat, M.; Matito, E. How do the Hückel and Baird Rules Fade Away in Annulenes? *Molecules* **2020**, *25*, 711.
-31. Mulliken, R. S. Electronic Population Analysis on LCAO–MO Molecular Wave Functions. I. *J. Chem. Phys.* **1955**, *23*, 1833–1840.
-32. Löwdin, P.-O. On the Non-Orthogonality Problem Connected with the Use of Atomic Wave Functions in the Theory of Molecules and Crystals. *J. Chem. Phys.* **1950**, *18*, 365–375.
-33. Sun, Q.; Chan, G. K.-L. Exact and Optimal Quantum Mechanics/Molecular Mechanics Boundaries. *J. Chem. Theory Comput.* **2014**, *10*, 3784–3790.
-34. Reed, A. E.; Weinstock, R. B.; Weinhold, F. Natural population analysis. *J. Chem. Phys.* **1985**, *83*, 735–746.
-35. Knizia, G. Intrinsic Atomic Orbitals: An Unbiased Bridge between Quantum Theory and Chemical Concepts. *J. Chem. Theory Comput.* **2013**, *9*, 4834–4843.
-36. Bader, R. F. W. *Atoms in Molecules: A Quantum Theory*; Oxford University Press: Oxford, 1990.
-37. Keith, T. A. *AIMAll*, TK Gristmill Software: Overland Park, KS, USA. aim.tkgristmill.com.
-38. Sun, Q.; Berkelbach, T. C.; Blunt, N. S.; *et al.* PySCF: the Python-based simulations of chemistry framework. *WIREs Comput. Mol. Sci.* **2018**, *8*, e1340.
-39. Verstraelen, T.; *et al.* IOData: A python library for reading, writing, and converting computational chemistry file formats and generating input files. *J. Comput. Chem.* **2021**, *42*, 458–464.
+30. Mulliken, R. S. Electronic Population Analysis on LCAO–MO Molecular Wave Functions. I. *J. Chem. Phys.* **1955**, *23*, 1833–1840.
+31. Löwdin, P.-O. On the Non-Orthogonality Problem Connected with the Use of Atomic Wave Functions in the Theory of Molecules and Crystals. *J. Chem. Phys.* **1950**, *18*, 365–375.
+32. Sun, Q.; Chan, G. K.-L. Exact and Optimal Quantum Mechanics/Molecular Mechanics Boundaries. *J. Chem. Theory Comput.* **2014**, *10*, 3784–3790.
+33. Reed, A. E.; Weinstock, R. B.; Weinhold, F. Natural population analysis. *J. Chem. Phys.* **1985**, *83*, 735–746.
+34. Knizia, G. Intrinsic Atomic Orbitals: An Unbiased Bridge between Quantum Theory and Chemical Concepts. *J. Chem. Theory Comput.* **2013**, *9*, 4834–4843.
+35. Bader, R. F. W. *Atoms in Molecules: A Quantum Theory*; Oxford University Press: Oxford, 1990.
+36. Keith, T. A. *AIMAll*, TK Gristmill Software: Overland Park, KS, USA. aim.tkgristmill.com.
+37. Sun, Q.; Berkelbach, T. C.; Blunt, N. S.; *et al.* PySCF: the Python-based simulations of chemistry framework. *WIREs Comput. Mol. Sci.* **2018**, *8*, e1340.
+38. Verstraelen, T.; *et al.* IOData: A python library for reading, writing, and converting computational chemistry file formats and generating input files. *J. Comput. Chem.* **2021**, *42*, 458–464.

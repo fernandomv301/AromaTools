@@ -30,7 +30,7 @@ AroElectronics automatically:
 
 | Index | Description | Aromatic character |
 |-------|-------------|--------------------|
-| Iring | Multicenter bond index (Giambiagi) | Higher is more aromatic |
+| $I_{ring}$ | Multicenter bond index (Giambiagi) | Higher is more aromatic |
 | MCI | Multicenter index (Bultinck) | Higher is more aromatic |
 | PDI | Para-delocalization index | Higher is more aromatic |
 | FLU | Aromatic fluctuation index | **Lower** is more aromatic (0 = ideal) |
@@ -49,14 +49,14 @@ $$
 
 BOA compares the two sets of alternate bonds, so it can vanish when the bonds alternate in a pattern that cancels out in the averages, and it is not well defined for rings with an odd number of atoms. BOAc compares each bond with the next one around the ring, so it detects any irregularity and is valid for rings of any size. In a perfectly regular ring both are zero.
 
-Iring, MCI and AV1245 are reported also in the normalized form $x^{1/n}$, where $n$ is the number of atoms of the ring, so that rings of different size can be compared.
+$I_{ring}$, MCI and AV1245 are reported also in the normalized form $x^{1/n}$, where $n$ is the number of atoms of the ring, so that rings of different size can be compared.
 
 **Limitations by ring size**
 
 - PDI is defined only for six-membered rings.
 - AV1245 and AVmin require rings of at least six atoms.
 - The cost of MCI grows factorially with the number of ring atoms; it is reported as `N/A` for rings of more than 12 atoms. AV1245 and AVmin are the alternatives for large rings.
-- FLU needs a reference DI for every type of bond in the ring (CC, CN, BN, NN, CS, CO); otherwise it is reported as not available.
+- FLU needs a reference DI for every type of bond in the ring (CC, CN, BN, NN, CS, CO).
 
 ---
 
@@ -239,5 +239,14 @@ The complete list, with the works of the other AromaTools modules, is in [Method
 - Verstraelen, T. *et al.* *J. Comput. Chem.* **2021**, *42*, 458. (IOData)
 - Giambiagi, M.; de Giambiagi, M. S.; dos Santos Silva, C. D.; de Figueiredo, A. P. *Phys. Chem. Chem. Phys.* **2000**, *2*, 3381. (Iring)
 - Bultinck, P.; Ponec, R.; Van Damme, S. *J. Phys. Org. Chem.* **2005**, *18*, 706. (MCI)
+- Poater, J.; Fradera, X.; Duran, M.; Solà, M. *Chem. Eur. J.* **2003**, *9*, 400. (PDI)
 - Matito, E.; Duran, M.; Solà, M. *J. Chem. Phys.* **2005**, *122*, 014109. (FLU)
 - Matito, E. *Phys. Chem. Chem. Phys.* **2016**, *18*, 11839. (AV1245 and AVmin)
+- Casademont-Reig, I.; Ramos-Cordoba, E.; Torrent-Sucarrat, M.; Matito, E. *Molecules* **2020**, *25*, 711. (BLA and BOA)
+- Mulliken, R. S. *J. Chem. Phys.* **1955**, *23*, 1833. (Mulliken partition)
+- Löwdin, P.-O. *J. Chem. Phys.* **1950**, *18*, 365. (Löwdin partition)
+- Sun, Q.; Chan, G. K.-L. *J. Chem. Theory Comput.* **2014**, *10*, 3784. (meta-Löwdin partition)
+- Reed, A. E.; Weinstock, R. B.; Weinhold, F. *J. Chem. Phys.* **1985**, *83*, 735. (NAO partition)
+- Knizia, G. *J. Chem. Theory Comput.* **2013**, *9*, 4834. (IAO partition)
+- Bader, R. F. W. *Atoms in Molecules: A Quantum Theory*; Oxford University Press: Oxford, 1990. (QTAIM partition)
+- Keith, T. A. *AIMAll*, TK Gristmill Software: Overland Park, KS, USA. (atomic files for QTAIM)
