@@ -1,12 +1,13 @@
 Metadata-Version: 2.4
 Name: aromatools
-Version: 0.2.47
+Version: 0.2.49
 Summary: Tools for aromaticity evaluation
 Author: Fernando Martínez-Villarino, Mesías Orozco-Ic, Gabriel Merino
 License-Expression: MIT
 Requires-Python: >=3.9
 Description-Content-Type: text/markdown
 License-File: LICENSE
+Requires-Dist: esipy
 Requires-Dist: numpy
 Requires-Dist: matplotlib
 Requires-Dist: ase

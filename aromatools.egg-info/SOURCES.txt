@@ -10,6 +10,9 @@ aromatools.egg-info/entry_points.txt
 aromatools.egg-info/requires.txt
 aromatools.egg-info/top_level.txt
 aromatools/aroelectronics/NImL.py
+aromatools/aroelectronics/__init__.py
+aromatools/aroelectronics/__main__.py
+aromatools/aroelectronics/aroelectronics.py
 aromatools/aroelectronics/mulliken_and_lowdin.py
 aromatools/arogeometric/__init__.py
 aromatools/arogeometric/__main__.py
