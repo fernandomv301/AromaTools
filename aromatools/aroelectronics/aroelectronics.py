@@ -29,7 +29,9 @@ BANNER = r"""
    PDI       Para-delocalization index (6-membered rings only)
    FLU       Aromatic fluctuation index
    AV1245    4-center index (>= 6-membered rings)
-   BOA       Bond-order alternation
+   BOA       Bond-order alternation (and BOAc)
+   DI        Delocalization indices of the ring bonds
+   POPULATIONS  Atomic populations of the ring atoms
 
  Three calculation modes:
    • PySCF (from scratch): provide xyz + functional + basis set
@@ -156,15 +158,70 @@ def _fmt(val, decimals=6):
         return str(val)
 
 
-def _print_results(esi, rings, want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa=False):
+def _nth_root(value, n):
+    # Same normalization as ESIpy: the sign is kept for negative values.
+    if value is None:
+        return None
+    if value < 0:
+        return -(abs(value) ** (1.0 / n))
+    return value ** (1.0 / n)
+
+
+def _iring_n(ind, ring):
+    # esipython 1.0.6 (PyPI) has no iring_n / mci_n; the GitHub version does.
+    n = getattr(ind, "iring_n", None)
+    return n if n is not None else _nth_root(ind.iring, len(ring))
+
+
+def _mci_n(ind, ring):
+    n = getattr(ind, "mci_n", None)
+    return n if n is not None else _nth_root(ind.mci, len(ring))
+
+
+def _di_and_populations(esi, ring):
+    # DI of the ring bonds and atomic populations, from the AOMs that ESIpy built.
+    # find_di() gives 2*Tr(A_i A_j) of one spin channel; ESIpy defines the DI as 4*Tr(A_i A_j) for a
+    # restricted wavefunction (hence the factor 2) and as the sum of the alpha and beta channels
+    # for an unrestricted one (find_ns() already includes the factor 2 for the restricted case).
+    from esipy.tools import find_di, find_ns, wf_type
+    aoms = esi.aom
+    n = len(ring)
+    pairs = [(ring[k], ring[(k + 1) % n]) for k in range(n)]
+    if wf_type(aoms) == "unrest":
+        dis  = [find_di(aoms[0], a, b) + find_di(aoms[1], a, b) for a, b in pairs]
+        pops = [np.trace(aoms[0][a - 1]) + np.trace(aoms[1][a - 1]) for a in ring]
+    else:
+        dis  = [2 * find_di(aoms, a, b) for a, b in pairs]
+        pops = list(find_ns(ring, aoms))
+    return pairs, dis, pops
+
+
+def _di_pop_lines(esi, ring, symbols, want_di, want_pop):
+    pairs, dis, pops = _di_and_populations(esi, ring)
+    lines = []
+    if want_pop:
+        lines.append("    Atomic populations (electrons):")
+        for a, p in zip(ring, pops):
+            lines.append(f"      {symbols[a - 1]}{a} = {_fmt(p)}")
+    if want_di:
+        lines.append("    Delocalization indices (ring bonds):")
+        for (a, b), d in zip(pairs, dis):
+            lines.append(f"      {symbols[a - 1]}{a}-{symbols[b - 1]}{b} = {_fmt(d)}")
+    return lines
+
+
+def _print_results(esi, rings, want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa=False,
+                   want_di=False, want_pop=False, symbols=None):
     for i, (ring, ind) in enumerate(zip(rings, esi.indicators)):
         ring_str = "-".join(str(a) for a in ring)
         print(f"\n  Ring {i + 1}: [{ring_str}]")
+        if want_di or want_pop:
+            print("\n".join(_di_pop_lines(esi, ring, symbols, want_di, want_pop)))
         if want_iring:
-            print(f"    Iring    = {_fmt(ind.iring)}   (^1/n = {_fmt(ind.iring_n)})")
+            print(f"    Iring    = {_fmt(ind.iring)}   (^1/n = {_fmt(_iring_n(ind, ring))})")
         if want_mci:
             if ind.mci is not None:
-                print(f"    MCI      = {_fmt(ind.mci)}   (^1/n = {_fmt(ind.mci_n)})")
+                print(f"    MCI      = {_fmt(ind.mci)}   (^1/n = {_fmt(_mci_n(ind, ring))})")
             else:
                 print(f"    MCI      = N/A  (ring > 12 atoms)")
         if want_pdi:
@@ -187,7 +244,8 @@ def _write_csv(fname, header, rows):
 
 
 def _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
-               want_iring, want_mci, want_pdi, want_flu, want_av1245, csv_files, want_boa=False):
+               want_iring, want_mci, want_pdi, want_flu, want_av1245, csv_files, want_boa=False,
+               want_di=False, want_pop=False, symbols=None):
     inds = esi.indicators
     lines = []
     lines.append("=" * 60)
@@ -221,11 +279,13 @@ def _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
     for i, (ring, ind) in enumerate(zip(rings, inds)):
         ring_str = "-".join(str(a) for a in ring)
         lines.append(f"\n  Ring {i + 1}: [{ring_str}]")
+        if want_di or want_pop:
+            lines.extend(_di_pop_lines(esi, ring, symbols, want_di, want_pop))
         if want_iring:
-            lines.append(f"    Iring    = {_fmt(ind.iring)}   (^1/n = {_fmt(ind.iring_n)})")
+            lines.append(f"    Iring    = {_fmt(ind.iring)}   (^1/n = {_fmt(_iring_n(ind, ring))})")
         if want_mci:
             if ind.mci is not None:
-                lines.append(f"    MCI      = {_fmt(ind.mci)}   (^1/n = {_fmt(ind.mci_n)})")
+                lines.append(f"    MCI      = {_fmt(ind.mci)}   (^1/n = {_fmt(_mci_n(ind, ring))})")
             else:
                 lines.append(f"    MCI      = N/A  (ring > 12 atoms)")
         if want_pdi:
@@ -252,22 +312,41 @@ def _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
     return fname
 
 
-def _save_results(name, partition, rings, esi, want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa=False):
+def _save_results(name, partition, rings, esi, want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa=False,
+                  want_di=False, want_pop=False, symbols=None):
     inds  = esi.indicators
     files = []
 
     def ring_label(r):
         return "-".join(str(a) for a in r)
 
+    if want_pop:
+        rows = []
+        for i, r in enumerate(rings):
+            _, _, pops = _di_and_populations(esi, r)
+            rows += [(i + 1, symbols[a - 1], a, _fmt(p)) for a, p in zip(r, pops)]
+        fname = f"{name}_{partition}_populations.csv"
+        _write_csv(fname, "Ring,Symbol,Atom,Population", rows)
+        files.append(fname)
+
+    if want_di:
+        rows = []
+        for i, r in enumerate(rings):
+            pairs, dis, _ = _di_and_populations(esi, r)
+            rows += [(i + 1, f"{symbols[a - 1]}{a}-{symbols[b - 1]}{b}", _fmt(d)) for (a, b), d in zip(pairs, dis)]
+        fname = f"{name}_{partition}_di.csv"
+        _write_csv(fname, "Ring,Bond,DI", rows)
+        files.append(fname)
+
     if want_iring:
-        rows  = [(i + 1, ring_label(r), _fmt(ind.iring), _fmt(ind.iring_n))
+        rows  = [(i + 1, ring_label(r), _fmt(ind.iring), _fmt(_iring_n(ind, r)))
                  for i, (r, ind) in enumerate(zip(rings, inds))]
         fname = f"{name}_{partition}_iring.csv"
         _write_csv(fname, "Ring,Atoms,Iring,Iring**(1/n)", rows)
         files.append(fname)
 
     if want_mci:
-        rows  = [(i + 1, ring_label(r), _fmt(ind.mci), _fmt(ind.mci_n))
+        rows  = [(i + 1, ring_label(r), _fmt(ind.mci), _fmt(_mci_n(ind, r)))
                  for i, (r, ind) in enumerate(zip(rings, inds)) if ind.mci is not None]
         fname = f"{name}_{partition}_mci.csv"
         _write_csv(fname, "Ring,Atoms,MCI,MCI**(1/n)", rows)
@@ -331,10 +410,12 @@ def main():
     want_flu    = _truthy(data.get("FLU",    "NO"))
     want_av1245 = _truthy(data.get("AV1245", "NO"))
     want_boa    = _truthy(data.get("BOA",    "NO"))
+    want_di     = _truthy(data.get("DI",     "NO"))
+    want_pop    = _truthy(data.get("POPULATIONS", "NO"))
 
-    if not any([want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa]):
+    if not any([want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa, want_di, want_pop]):
         raise SystemExit(
-            "ERROR: No index requested. Set at least one of IRING, MCI, PDI, FLU, AV1245, BOA to YES."
+            "ERROR: No index requested. Set at least one of IRING, MCI, PDI, FLU, AV1245, BOA, DI, POPULATIONS to YES."
         )
 
     if partition == "qtaim":
@@ -385,7 +466,8 @@ def main():
     print(f"[info] Indices  : "
           + "  ".join(k for k, v in [("Iring", want_iring), ("MCI", want_mci),
                                       ("PDI", want_pdi), ("FLU", want_flu),
-                                      ("AV1245", want_av1245), ("BOA", want_boa)] if v))
+                                      ("AV1245", want_av1245), ("BOA", want_boa),
+                                      ("DI", want_di), ("POPULATIONS", want_pop)] if v))
 
     if partition == "qtaim":
         esi = _run_esi_qtaim(aom, rings, molinfo)
@@ -395,13 +477,16 @@ def main():
     print(f"\n{'='*50}")
     print(f"  {name}  |  partition: {partition}")
     print("="*50)
-    _print_results(esi, rings, want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa)
+    _print_results(esi, rings, want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
+                   want_di=want_di, want_pop=want_pop, symbols=symbols)
 
     files = _save_results(name, partition, rings, esi,
-                          want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa)
+                          want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
+                          want_di=want_di, want_pop=want_pop, symbols=symbols)
 
     txt = _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
-                     want_iring, want_mci, want_pdi, want_flu, want_av1245, files, want_boa=want_boa)
+                     want_iring, want_mci, want_pdi, want_flu, want_av1245, files, want_boa=want_boa,
+                     want_di=want_di, want_pop=want_pop, symbols=symbols)
     files.append(txt)
 
     print(f"\n[ok] Output files:")

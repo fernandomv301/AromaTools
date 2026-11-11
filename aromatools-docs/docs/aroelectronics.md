@@ -226,7 +226,10 @@ Ring 1: [1-2-6-10-7-3]
 AroElectronics needs [ESIpy](https://github.com/jgrebol/ESIpy) and, to run calculations from scratch, [PySCF](https://pyscf.org/), in addition to the general requirements of AromaTools. The QTAIM mode needs the files of an [AIMAll](https://aim.tkgristmill.com/) calculation.
 
 ```bash
-pip install esipy pyscf
+pip install esipython pyscf
+
+# the package is called "esipython" on PyPI, but it is imported as "esipy".
+# Do not install "esipy": that is a different project (an EVE Online API client).
 ```
 
 ---
