@@ -65,7 +65,7 @@ NAME_MOLECULE             mol
 PROGRAM                   Gaussian            # ORCA or GAUSSIAN
 KEYWORD_LINE              Functional/Basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC
 
-PROCS                     16
+PROCS                     16 # Just for Gaussian option, if you want to use Orca, you have to add the procs in the Orca block
 MEMORY_GB                 32
 
 CHARGE                    0
