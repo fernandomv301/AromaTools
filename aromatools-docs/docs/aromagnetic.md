@@ -101,6 +101,29 @@ VTK_FILES         YES              # YES or NO
 END_GRID
 ```
 
+### Isolines and isosurfaces of the induced magnetic field
+
+The induced magnetic field, $B^{ind}_{z}$, calculated on the grid can be shown in two complementary ways:
+
+- **Isolines** (contour lines): lines of constant $B^{ind}_{z}$ drawn on a plane, usually a plane perpendicular to the molecular plane that crosses the ring, or a plane parallel to the ring at a given height. They show the sign and the decay of the field in a two-dimensional section.
+- **Isosurfaces**: surfaces of constant $B^{ind}_{z}$ in three dimensions. Two surfaces, one for a positive and one for a negative value, enclose the shielding and the deshielding regions and give a global view of the shape of the response.
+
+#### Published systems
+
+<!-- Add here the figures (isolines and isosurfaces) of systems that have already been published.
+     For each system, write its name and its reference. Template:
+
+     **System name.** Reference: Author, A.; Author, B. *Journal* **Year**, *Volume*, Pages.
+
+     ![Isolines of system](images/name_isolines.png)
+     ![Isosurfaces of system](images/name_isosurfaces.png)
+-->
+
+#### Systems not yet published
+
+<!-- Add here the figures of systems whose results have not been published yet.
+     For each system, write its name and, if it applies, a note such as "unpublished results". -->
+
 ## Profile module
 ### Input format
 
@@ -216,60 +239,6 @@ MAKE_AXIS_Y   YES            # YES or NO
 END_NICS_SCAN_XY
 ```
 
-## Isolines and isosurfaces of the induced magnetic field
-
-The induced magnetic field, $B^{ind}_{z}$, is the response of the electrons of a molecule to an external magnetic field, and it is reconstructed in AroMagnetic from the shielding tensor calculated at the points of a grid of ghost atoms (see the [Grid module](#grid-module)). Representing it in space shows where the molecule **shields** the external field (the induced field opposes it) and where it **deshields** it (the induced field reinforces it). In an aromatic ring the field is shielding inside the ring, whereas in an antiaromatic ring it is deshielding; regions without a π system show a short-range response.
-
-The same data can be shown in two complementary ways:
-
-- **Isolines** (contour lines): lines of constant $B^{ind}_{z}$ drawn on a plane, usually a plane perpendicular to the molecular plane that crosses the ring, or a plane parallel to the ring at a given height. They show the sign and the decay of the field in a two-dimensional section.
-- **Isosurfaces**: surfaces of constant $B^{ind}_{z}$ in three dimensions. Two surfaces, one for a positive and one for a negative value, enclose the shielding and the deshielding regions and give a global view of the shape of the response (for example, the cones above and below the ring).
-
-**References.** The representation of the induced magnetic field in cyclic molecules was introduced by Merino, Heine and Seifert (*Chem. Eur. J.* **2004**, *10*, 4367–4371), and the σ and π contributions are discussed by Heine, Islas and Merino (*J. Comput. Chem.* **2007**, *28*, 302–309). See [Methods and references](methods.md).
-
-### How to obtain them
-
-AroMagnetic generates the scalar field on the grid and saves it in files that are visualized with an external program; it does not draw the isolines or the isosurfaces itself.
-
-1. Turn on the Grid module in `INPUT.txt` and ask for the `.vtk` files:
-
-```text
-GRID_MODULE                 ON
-
-BEGIN_GRID
-
-GA_MAX            80               # Maximum number of ghost atoms per input
-EXTERNAL_FIELD    0.0 0.0 1.0      # Bx By Bz
-NUM_POINTS        19 19 19         # Nx Ny Nz
-GRID_MARGIN       2.0              # Å
-VTK_FILES         YES              # YES or NO
-
-END_GRID
-```
-
-2. Generate the inputs (`work_amg`), run them with Gaussian or ORCA, and analyze the results (`analyze_amg`), as described in [How to run AroMagnetic?](#how-to-run-aromagnetic).
-3. Open the `.cube` or `.vtk` file in a program that reads volumetric data, and draw the isolines on a plane or the isosurfaces for the values of $B^{ind}_{z}$ that you choose.
-
-A larger number of points (`NUM_POINTS`) and a larger margin (`GRID_MARGIN`) give smoother and wider maps, but they increase the number of ghost atoms and, therefore, the cost of the calculation.
-
-The commands `amg add` and `amg sub` add or subtract two fields saved in `.cube` or `.vtk` files, which makes it possible to compare two systems, or two calculations of the same system, point by point.
-
-### Published systems
-
-<!-- Add here the figures (isolines and isosurfaces) of systems that have already been published.
-     For each system, write its name and its reference. Template:
-
-     **System name.** Reference: Author, A.; Author, B. *Journal* **Year**, *Volume*, Pages.
-
-     ![Isolines of system](images/name_isolines.png)
-     ![Isosurfaces of system](images/name_isosurfaces.png)
--->
-
-### Systems not yet published
-
-<!-- Add here the figures of systems whose results have not been published yet.
-     For each system, write its name and, if it applies, a note such as "unpublished results". -->
-
 ## Interfaz with Orca
 ### Orca section
 
@@ -298,12 +267,12 @@ END_ORCA_BLOCK
     - If you are using generic databases in your calculations, you must create the *basis.txt* file and enter your database, leaving two spaces at the end of the file.
 2. Generate the quantum chemistry input files:
 ```text
-work_amg
+amg run
 ```
 3. Run the generated input files using Gaussian or ORCA.
 4. Once the calculations are finished, analyze the results:
 ```text
-analyze_amg
+amg get
 ```
 This command generates .cube files (and .vtk files if selected in INPUT.txt), .csv files and/or graph, depending on the module you've chosen.
 
@@ -317,11 +286,25 @@ functional/basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC POP=NBO6read
 ```
 2. Generate the Gaussian input files:
 ```text
-work_amg
+amg run
 ```
 3. Run the Gaussian calculations.
 4. After the calculations are completed, perform the molecular orbital analysis:
 ```text
-mo_amg
+amg mo
 ```
 
+**Available commands**
+
+The commands that read the input file (`amg run`, `amg get` and `amg mo`) must be run from the folder that contains `INPUT.txt`. The program can be called with `amg` or with `aromagnetic`; the two names are equivalent.
+
+| Command | Description |
+|---------|-------------|
+| `amg run` | Generates the quantum chemistry input files from `INPUT.txt` |
+| `amg get` | Reads the outputs and generates the `.csv` files, plots and integrals; with `--interactive` the interactive mode of the NICS-XY-scan (Predi-XY) analysis is used |
+| `amg mo` | Molecular orbital decomposition analysis (Gaussian only) |
+| `amg rings` | Shows an image with the ring numbering (for `PREDI_XY_PATH`) |
+| `amg reset` | Removes the files generated by a previous run |
+| `amg check` | Verifies that the Gaussian or ORCA calculations finished correctly |
+| `amg add <f1> <f2>` | Adds two scalar fields saved in `.cube` or `.vtk` files (both files of the same type) |
+| `amg sub <f1> <f2>` | Subtracts the second field from the first one (`.cube` or `.vtk`) |
