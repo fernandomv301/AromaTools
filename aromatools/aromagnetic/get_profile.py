@@ -315,7 +315,7 @@ def run_horizontal_profile(cfg, ats, coords, name, gen_flag, pseudo_pi_flag):
 # ============================================================
 
 def main():
-    cfg = read_input("INPUT.txt")
+    cfg = read_input()
     if not cfg:
         raise SystemExit("ERROR: INPUT.txt not found in current directory")
 

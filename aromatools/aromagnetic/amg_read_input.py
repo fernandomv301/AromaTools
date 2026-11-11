@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import annotations
+import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -87,9 +88,35 @@ def _parse_value(tokens: List[str], *, keep_as_string: bool = False) -> Value:
     return parsed
 
 
-def read_input(filepath: Union[str, Path] = "INPUT.txt"):
+_ACTIVE_INPUT: Optional[str] = None
 
-    path = Path(filepath).expanduser().resolve()
+
+def set_input_file(path: Optional[Union[str, Path]]):
+    """Use this file as the input of every AroMagnetic command (e.g. 'amg run my_input.txt')."""
+    global _ACTIVE_INPUT
+    _ACTIVE_INPUT = str(path) if path else None
+
+
+def find_input_file(filepath: Optional[Union[str, Path]] = None):
+    """
+    The input file to read: the one given by the user; otherwise 'INPUT.txt' of the current
+    folder, with any capitalization (INPUT.txt, input.txt, Input.TXT, ...).
+    """
+    if filepath:
+        return filepath
+    if _ACTIVE_INPUT:
+        return _ACTIVE_INPUT
+    if os.path.isfile("INPUT.txt"):
+        return "INPUT.txt"
+    for name in sorted(os.listdir(".")):
+        if name.lower() == "input.txt" and os.path.isfile(name):
+            return name
+    return "INPUT.txt"
+
+
+def read_input(filepath: Optional[Union[str, Path]] = None):
+
+    path = Path(find_input_file(filepath)).expanduser().resolve()
     if not path.exists():
         raise FileNotFoundError(f"INPUT file not found: {path}")
 
@@ -228,4 +255,4 @@ def read_input(filepath: Union[str, Path] = "INPUT.txt"):
 
 
 if __name__ == "__main__":
-    cfg = read_input("INPUT.txt")
+    cfg = read_input()

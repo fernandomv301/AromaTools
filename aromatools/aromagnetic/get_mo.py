@@ -127,7 +127,7 @@ def detect_active_module(cfg):
 
 
 def load_common_cfg():
-    cfg = read_input("INPUT.txt")
+    cfg = read_input()
     if not cfg:
         raise SystemExit("ERROR: INPUT.txt does not exist or could not be read.")
 

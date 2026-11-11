@@ -86,7 +86,7 @@ def build_mo_to_labels(spec, others_labels=None):
             mo2l.setdefault(m, []).append(label)
     return mo2l, list(others_labels or [])
 
-def load_cfg(input_path="INPUT.txt"):
+def load_cfg(input_path=None):
     cfg = read_input(input_path)
     if not cfg:
         raise FileNotFoundError(f"Missing {input_path}")

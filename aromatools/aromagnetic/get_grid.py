@@ -15,7 +15,7 @@ from pymatgen.symmetry.analyzer import PointGroupAnalyzer
 
 # AromaTools modules
 from . import pseudo_pi
-from .amg_read_input import read_input
+from .amg_read_input import read_input, find_input_file
 from .amg_write_inputs import make_inputs
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -43,10 +43,10 @@ def only_ch(mol_file):
     return True
 
 # ---------------- IMF helpers (raw scan) ----------------
-def _imf_find_tokens(key, imf_path="INPUT.txt"):
+def _imf_find_tokens(key, imf_path=None):
     key_u = key.strip().upper()
     try:
-        with open(imf_path, "r", encoding="utf-8", errors="ignore") as fh:
+        with open(find_input_file(imf_path), "r", encoding="utf-8", errors="ignore") as fh:
             for raw in fh:
                 s = raw.strip()
                 if not s or s.startswith("#"):
@@ -66,13 +66,13 @@ def _imf_truthy(tok):
     t = str(tok).strip().upper()
     return t in ("YES", "Y", "TRUE", "T", "1", "ON")
 
-def _imf_get_bool(key, default=False, imf_path="INPUT.txt"):
+def _imf_get_bool(key, default=False, imf_path=None):
     toks = _imf_find_tokens(key, imf_path=imf_path)
     if not toks:
         return default
     return _imf_truthy(toks[0])
 
-def _imf_get_float(key, default=None, imf_path="INPUT.txt"):
+def _imf_get_float(key, default=None, imf_path=None):
     toks = _imf_find_tokens(key, imf_path=imf_path)
     if not toks:
         return default
@@ -302,7 +302,7 @@ def write_xyz(path, base_atoms, pts):
 # ---------------- main ----------------
 
 def main():
-    cfg = read_input("INPUT.txt")
+    cfg = read_input()
     if not cfg:
         raise SystemExit("error: INPUT.txt not found in current directory")
 

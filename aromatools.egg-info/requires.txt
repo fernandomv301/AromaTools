@@ -1,6 +1,0 @@
-esipy
-numpy
-matplotlib
-ase
-pymatgen
-networkx

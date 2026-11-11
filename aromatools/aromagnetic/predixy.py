@@ -371,7 +371,7 @@ def rings_info():
     Reads INPUT.txt, orients the molecule, detects rings, and writes
     {name}_rings.png with each ring center numbered.
     """
-    cfg = read_input("INPUT.txt")
+    cfg = read_input()
     if not cfg:
         raise SystemExit("ERROR: INPUT.txt not found.")
 

@@ -567,7 +567,7 @@ def analyze_horizontal_profile(cfg, name, program, xyz_file, n_real, interactive
 # ============================================================
 
 def main(interactive=False):
-    cfg = read_input("INPUT.txt")
+    cfg = read_input()
     if not cfg:
         raise SystemExit("ERROR: INPUT.txt not found")
 

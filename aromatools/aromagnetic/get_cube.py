@@ -373,7 +373,7 @@ def pad_vis(shape, origin_bohr, steps_bohr, values_list, pad_to=3):
 
 # ---------------- main ----------------
 def main():
-    cfg = read_input("INPUT.txt")
+    cfg = read_input()
     if not cfg:
         raise SystemExit("ERROR: INPUT.txt not found in current directory")
 

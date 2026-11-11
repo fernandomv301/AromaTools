@@ -12,3 +12,6 @@ aromatools-docs/site/
 dist/
 build/
 *.egg-info/
+
+# Local editor / assistant settings
+.claude/

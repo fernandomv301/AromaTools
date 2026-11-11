@@ -7,7 +7,7 @@ name = "aromatools"
 version = "0.2.49"
 description = "Tools for aromaticity evaluation"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "MIT"
 authors = [
   { name = "Fernando Martínez-Villarino" },
@@ -18,9 +18,11 @@ authors = [
   { name = "Gabriel Merino" }
 ]
 dependencies = [
-  "esipython",
+  "esipython>=1.1.0",
   "numpy",
+  "pandas",
   "matplotlib",
+  "plotly",
   "ase",
   "pymatgen",
   "networkx"
@@ -31,3 +33,4 @@ amg            = "aromatools.aromagnetic.aromagnetic:main"
 aromagnetic    = "aromatools.aromagnetic.aromagnetic:main"
 arogeometric   = "aromatools.arogeometric.arogeometric:main"
 aroelectronics = "aromatools.aroelectronics.aroelectronics:main"
+ael            = "aromatools.aroelectronics.aroelectronics:main"

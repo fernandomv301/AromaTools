@@ -50,20 +50,43 @@ Interpretation:
 - PDI (para-delocalization index)
 - FLU (aromatic fluctuation index)
 - AV1245 and AVmin
+- BOA and BOAc (bond-order alternation)
+- DI (delocalization indices of the ring bonds) and atomic populations
 
-The indices are computed with ESIpy from a PySCF calculation or from a
-wavefunction file (.fchk, .molden), using the meta-Löwdin, NAO, IAO,
-Löwdin or Mulliken atomic partitions:
+The indices are computed with ESIpy from a PySCF calculation, from a
+wavefunction file (.fchk, .molden) or from AIMAll atomic files (QTAIM), using the
+meta-Löwdin, NAO, IAO, Löwdin or Mulliken atomic partitions (or QTAIM):
 
 ```bash
-aroelectronics INPUT.txt
+ael run
 ```
+
+(`ael` and `aroelectronics` are the same command; `ael run` reads `INPUT.txt` from the current folder.)
 
 ---
 
 ## Installation
 
+AromaTools requires Python 3.10 or newer.
+
 Install using pip:
 
 ```bash
 pip install aromatools
+```
+
+Or install it from the Git repository:
+
+```bash
+pip install git+https://github.com/fernandomv301/AromaTools.git
+```
+
+You can also clone the repository and install it from the local folder:
+
+```bash
+git clone https://github.com/fernandomv301/AromaTools.git
+cd AromaTools
+pip install .
+```
+
+See the manual (Installation page) for updating, editable installs and the list of requirements.

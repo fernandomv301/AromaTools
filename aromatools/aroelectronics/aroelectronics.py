@@ -383,10 +383,22 @@ def _save_results(name, partition, rings, esi, want_iring, want_mci, want_pdi, w
     return files
 
 
-def main():
+def _find_input(path=None):
+    # The file given by the user; otherwise INPUT.txt of the current folder, with any capitalization.
+    if path:
+        return path
+    if os.path.isfile("INPUT.txt"):
+        return "INPUT.txt"
+    for name in sorted(os.listdir(".")):
+        if name.lower() == "input.txt" and os.path.isfile(name):
+            return name
+    return "INPUT.txt"
+
+
+def run(input_path=None):
     print(BANNER)
 
-    input_path = sys.argv[1] if len(sys.argv) > 1 else "INPUT.txt"
+    input_path = _find_input(input_path)
     if not os.path.isfile(input_path):
         raise SystemExit(f"ERROR: {input_path} not found.")
 
@@ -492,6 +504,52 @@ def main():
     print(f"\n[ok] Output files:")
     for f in files:
         print(f"  {f}")
+
+
+# ──────────────────────────────────────────────
+#  Dispatcher
+# ──────────────────────────────────────────────
+
+_USAGE = """\
+Usage: ael <command> [options]
+
+Commands:
+  run [INPUT]    Compute the indices requested in INPUT.txt
+                 (or in the file INPUT, if one is given)
+  help           Show this message
+"""
+
+
+def dispatch(args):
+    """
+    args = sys.argv[1:]   (everything after the 'ael' / 'aroelectronics' executable name)
+    """
+    if not args:
+        print(BANNER)
+        print(_USAGE)
+        return
+
+    cmd  = args[0]
+    rest = args[1:]
+
+    if cmd.lower() == "run":
+        if len(rest) > 1:
+            raise SystemExit(f"ERROR: 'ael run' accepts at most one input file.\n\n{_USAGE}")
+        run(rest[0] if rest else None)
+
+    elif cmd.lower() in {"help", "-h", "--help"}:
+        print(BANNER)
+        print(_USAGE)
+
+    elif not rest and os.path.isfile(cmd):
+        run(cmd)    # previous form: aroelectronics INPUT.txt
+
+    else:
+        raise SystemExit(f"Unknown command: '{cmd}'\n\n{_USAGE}")
+
+
+def main():
+    dispatch(sys.argv[1:])
 
 
 if __name__ == "__main__":

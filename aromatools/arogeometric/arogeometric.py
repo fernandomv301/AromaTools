@@ -290,8 +290,14 @@ def extract_atoms_from_output(fileout):
                 x, y, z = map(float, parts[1:])
                 atoms.append((symbol, x, y, z))
     elif any("Entering Gaussian System" in line for line in lines):
+        # Gaussian prints the "Standard orientation" unless the job used symmetry=None (nosymm): then
+        # only the "Input orientation" is printed ("Z-Matrix orientation" for a Z-matrix input).
+        # The distances, and so the indices, are the same in all of them.
+        for title in ("Standard orientation", "Input orientation", "Z-Matrix orientation"):
+            if any(title in line for line in lines):
+                break
         for i in range(len(lines) - 5):
-            if "Standard orientation" in lines[i]:
+            if title in lines[i]:
                 atoms = []
                 j = i + 5
                 while "---" not in lines[j]:
@@ -309,7 +315,9 @@ def extract_atoms_from_output(fileout):
                 continue
             if start:
                 if "---" in line or not line.strip():
-                    start = False
+                    # The dashes under the title come before the atoms: they do not end the block.
+                    if atoms:
+                        start = False
                     continue
                 parts = line.strip().split()
                 if len(parts) == 4:
