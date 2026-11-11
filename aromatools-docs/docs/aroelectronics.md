@@ -231,22 +231,3 @@ pip install esipy pyscf
 
 ---
 
-## References
-
-The complete list, with the works of the other AromaTools modules, is in [Methods and references](methods.md).
-
-- Grèbol-Tomàs, J.; Matito, E.; Salvador, P. Can Aromaticity Be Evaluated Using Atomic Partitions Based on the Hilbert-Space? *Chem. Eur. J.* **2024**, *30*, e202401282.
-- Verstraelen, T. *et al.* *J. Comput. Chem.* **2021**, *42*, 458. (IOData)
-- Giambiagi, M.; de Giambiagi, M. S.; dos Santos Silva, C. D.; de Figueiredo, A. P. *Phys. Chem. Chem. Phys.* **2000**, *2*, 3381. (Iring)
-- Bultinck, P.; Ponec, R.; Van Damme, S. *J. Phys. Org. Chem.* **2005**, *18*, 706. (MCI)
-- Poater, J.; Fradera, X.; Duran, M.; Solà, M. *Chem. Eur. J.* **2003**, *9*, 400. (PDI)
-- Matito, E.; Duran, M.; Solà, M. *J. Chem. Phys.* **2005**, *122*, 014109. (FLU)
-- Matito, E. *Phys. Chem. Chem. Phys.* **2016**, *18*, 11839. (AV1245 and AVmin)
-- Casademont-Reig, I.; Ramos-Cordoba, E.; Torrent-Sucarrat, M.; Matito, E. *Molecules* **2020**, *25*, 711. (BLA and BOA)
-- Mulliken, R. S. *J. Chem. Phys.* **1955**, *23*, 1833. (Mulliken partition)
-- Löwdin, P.-O. *J. Chem. Phys.* **1950**, *18*, 365. (Löwdin partition)
-- Sun, Q.; Chan, G. K.-L. *J. Chem. Theory Comput.* **2014**, *10*, 3784. (meta-Löwdin partition)
-- Reed, A. E.; Weinstock, R. B.; Weinhold, F. *J. Chem. Phys.* **1985**, *83*, 735. (NAO partition)
-- Knizia, G. *J. Chem. Theory Comput.* **2013**, *9*, 4834. (IAO partition)
-- Bader, R. F. W. *Atoms in Molecules: A Quantum Theory*; Oxford University Press: Oxford, 1990. (QTAIM partition)
-- Keith, T. A. *AIMAll*, TK Gristmill Software: Overland Park, KS, USA. (atomic files for QTAIM)

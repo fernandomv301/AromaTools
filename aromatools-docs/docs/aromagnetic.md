@@ -239,6 +239,32 @@ MAKE_AXIS_Y   YES            # YES or NO
 END_NICS_SCAN_XY
 ```
 
+## Pseudo-π model
+
+The pseudo-π model is an inexpensive way of isolating the **π-electron contribution** to the magnetic response of conjugated hydrocarbons. It was proposed by Fowler and Steiner (see [Methods and references](methods.md)): the carbon framework is formally replaced by hydrogen atoms, each one with a single 1s function, so that the response of the model reproduces the π response of the original molecule.
+
+### How it works in AroMagnetic
+
+When the model is requested, AroMagnetic modifies the quantum chemistry inputs that it has just generated:
+
+- every carbon atom is replaced by a hydrogen atom, and the original hydrogen atoms are removed;
+- the ghost atoms of the grid or of the profiles, and the atoms marked as dummy (for example `H:`), are kept;
+- the rest of the input (keywords, basis set) is not changed.
+
+The model is valid only for molecules that contain just carbon and hydrogen (or just carbon as fullerene $\ce{C60}$). If other elements are present, the model is skipped and a warning is printed. When it is applied, the program prints `PSEUDO-π model was applied!`.
+
+### How to use it
+
+Set the keyword in the general section of `INPUT.txt`:
+
+```text
+PSEUDO_PI                 YES              # YES or NO
+```
+
+It works with the Grid module and with the profile modules. Then follow the usual workflow: generate the inputs with `amg run`, run them with Gaussian or ORCA, and analyze the results with `amg get`.
+
+To compare the π contribution with the complete response, run the same system again with `PSEUDO_PI NO`, in another folder.
+
 ## Interfaz with Orca
 ### Orca section
 
