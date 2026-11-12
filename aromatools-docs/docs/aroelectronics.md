@@ -260,7 +260,5 @@ If you install them by hand, note that the package is called `esipython` on PyPI
 pip install "esipython>=1.1.0" pyscf
 ```
 
-Do not install `esipy`: that is a different project (an EVE Online API client).
-
 ---
 
