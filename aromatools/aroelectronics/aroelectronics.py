@@ -40,11 +40,11 @@ BANNER = r"""
 
 ----------------------------------------------------------------------
  Developed by:
-   Fernando Martínez-Villarino · Joan Grebol-Tomas · Pedro Salvador ·
+   Fernando Martínez-Villarino · Joan Grèbol-Tomàs · Pedro Salvador ·
    Mesías Orozco-Ic · Eduard Matito · Gabriel Merino
 
  Citation:
-   Martínez-Villarino, F.; Grebol-Tomas, J.; Salvador, P.; Orozco-Ic, M.; Matito, E.; Merino, G.
+   Martínez-Villarino, F.; Grèbol-Tomàs, J.; Salvador, P.; Orozco-Ic, M.; Matito, E.; Merino, G.
    AromaTools 1.0, Cinvestav Mérida, Mérida, Mexico, 2025.
 
  Cinvestav – Mérida, Universitat de Girona and Donostia International Physics Center, 2026

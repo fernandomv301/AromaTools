@@ -35,7 +35,7 @@ evidence of electron delocalization in cyclic molecules.
 Developed by:
 
    Fernando Martínez-Villarino
-   Joan Grebol-Tomas
+   Joan Grèbol-Tomàs
    Pedro Salvador
    Mesías Orozco-Ic
    Eduard Matito
@@ -47,7 +47,7 @@ Developed by:
 ----------------------------------------------------------------------
 Citation:
 
-   Martínez-Villarino, F.; Grebol-Tomas, J.; Salvador, P.; Orozco-Ic, M.; Matito, E.; Merino, G.
+   Martínez-Villarino, F.; Grèbol-Tomàs, J.; Salvador, P.; Orozco-Ic, M.; Matito, E.; Merino, G.
    AromaTools 1.0, Cinvestav Mérida, Mérida, Mexico, 2025.
 
 ======================================================================
