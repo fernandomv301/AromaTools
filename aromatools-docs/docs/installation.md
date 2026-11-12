@@ -15,6 +15,8 @@ With conda: `conda create -n aromatools python=3.10` and `conda activate aromato
 pip install aromatools
 ```
 
+All the required libraries (including ESIpy, PySCF and IOData) are installed automatically; you do not need to install them by hand.
+
 ## Install from Git
 
 The source code is available at [github.com/fernandomv301/AromaTools](https://github.com/fernandomv301/AromaTools). Git must be installed on your computer.
@@ -52,6 +54,14 @@ python -c "import aromatools"
 ```
 
 and the three modules are installed as commands: `aromagnetic` (also available as `amg`), `arogeometric`, and `aroelectronics` (also available as `ael`). `amg` and `ael` with no arguments list their commands; `arogeometric` asks for the output file of the calculation; and `ael run` runs AroElectronics with the input file `INPUT.txt` of the current folder (see the pages of each module).
+
+### Quick reference
+
+| Module | Command | Description |
+|--------|---------|-------------|
+| AroGeometric | `arogeometric` | Geometric indices (HOMA, HOMAc, HOMER, BLA); asks for the output file of the calculation |
+| AroMagnetic | `aromagnetic` or `amg` | Magnetic criteria; `amg run`, `amg get`, ... (see the AroMagnetic page) |
+| AroElectronics | `aroelectronics` or `ael` | Electronic criteria; `ael run` (see the AroElectronics page) |
 
 ## Requirements
 

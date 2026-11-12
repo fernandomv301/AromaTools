@@ -11,7 +11,7 @@ Numbers in brackets refer to the [reference list](#reference-list) at the end of
 | Method | Description | References |
 |--------|-------------|------------|
 | HOMA93 | Harmonic oscillator model of aromaticity, based on bond-length equalization | [1,2,3] |
-| HOMAc | HOMA reparameterized with aromatic **and antiaromatic** | [4] |
+| HOMAc | HOMA reparameterized with aromatic **and antiaromatic** reference systems | [4] |
 | HOMER | HOMA reparameterized for the excited state (T₁) | [5] |
 | BLA | Bond length alternation: difference between the lengths of consecutive bonds of the ring | [6] |
 
@@ -40,19 +40,20 @@ Numbers in brackets refer to the [reference list](#reference-list) at the end of
 
 AroElectronics **does not reimplement the electronic indices**. It imports from [ESIpy](https://github.com/jgrebol/ESIpy) the functions needed to build the atomic overlap matrices and to compute the indices (`ESI`, the wavefunction reader and the reader of AIMAll files), and adds the AromaTools workflow around them: the `INPUT.txt` file, the detection of rings, the selection of indices and partitions, and the output files. The values obtained with AroElectronics are therefore those of ESIpy [23], and the works in which the indices and partitions were introduced must be cited.
 
-**Indices**
+### Indices
 
 | Method | Description | References |
 |--------|-------------|------------|
-| Delocalization index (DI) | Number of electron pairs shared between two atoms; the basis of the electronic indices | [24] |
+| Delocalization index (DI) | Number of electron pairs shared between two atoms; the basis of the electronic indices | [24,40] |
 | Iring | Multicenter bond index of a ring | [25] |
 | MCI | Multicenter index (sum of Iring over the permutations of the ring atoms) | [26] |
 | PDI | Para-delocalization index (six-membered rings) | [27] |
 | FLU | Aromatic fluctuation index | [28] |
-| AV1245 and AVmin | Average and minimum of the four-center indices of atoms 1-2-4-5 of the ring, for large rings | [29] |
-| BOA | Bond-order alternation, the electronic counterpart of BLA (uses the DI instead of the bond length). | [6] |
+| AV1245 | Average of the four-center indices of atoms 1-2-4-5 of the ring, for large rings | [29] |
+| AVmin | Minimum of the four-center indices of atoms 1-2-4-5 of the ring | [39] |
+| BOA | Bond-order alternation, the electronic counterpart of BLA (uses the DI instead of the bond length) | [6] |
 
-**Atomic partitions**
+### Atomic partitions
 
 | `PARTITION` | References |
 |-------------|------------|
@@ -64,6 +65,10 @@ AroElectronics **does not reimplement the electronic indices**. It imports from 
 | `qtaim` | Bader's Quantum Theory of Atoms in Molecules [35]; the AOMs are obtained with AIMAll [36] |
 
 PySCF [37] is used to run the calculations from scratch, and wavefunction files are read with IOData [38].
+
+### General reviews
+
+To become familiar with the electronic aromaticity indices without reading the original paper of each one, see the reviews [41,42].
 
 ---
 
@@ -107,3 +112,7 @@ PySCF [37] is used to run the calculations from scratch, and wavefunction files 
 36. Keith, T. A. *AIMAll*, TK Gristmill Software: Overland Park, KS, USA. aim.tkgristmill.com.
 37. Sun, Q.; Berkelbach, T. C.; Blunt, N. S.; *et al.* PySCF: the Python-based simulations of chemistry framework. *WIREs Comput. Mol. Sci.* **2018**, *8*, e1340.
 38. Verstraelen, T.; *et al.* IOData: A python library for reading, writing, and converting computational chemistry file formats and generating input files. *J. Comput. Chem.* **2021**, *42*, 458–464.
+39. García-Fernández, C.; Sierda, E.; Abadía, M.; Bugenhagen, B.; Prosenc, M. H.; Wiesendanger, R.; Bazarnik, M.; Ortega, J. E.; Brede, J.; Matito, E.; Arnau, A. Exploring the Relation between Intramolecular Conjugation and Band Dispersion in One-Dimensional Polymers. *J. Phys. Chem. C* **2017**, *121*, 27118–27125. DOI: 10.1021/acs.jpcc.7b08668.
+40. Matito, E.; Solà, M.; Salvador, P.; Duran, M. Electron Sharing Indexes at the Correlated Level. Application to Aromaticity Measures. *Faraday Discuss.* **2007**, *135*, 325–345. DOI: 10.1039/b605086g.
+41. Feixas, F.; Matito, E.; Poater, J.; Solà, M. Quantifying aromaticity with electron delocalization measures. *Chem. Soc. Rev.* **2015**, *44*, 6434–6451. DOI: 10.1039/C5CS00066A.
+42. Casademont-Reig, I.; Ramos-Cordoba, E.; Torrent-Sucarrat, M.; Matito, E. Aromaticity descriptors based on electron delocalization. In *Aromaticity: Modern Computational Methods and Applications*; Fernández, I., Ed.; Elsevier: The Netherlands, 2021; pp 235–259. DOI: 10.1016/B978-0-12-822723-7.00007-8.

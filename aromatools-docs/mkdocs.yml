@@ -1,9 +1,23 @@
 site_name: AromaTools Docs
+repo_url: https://github.com/fernandomv301/AromaTools
+repo_name: fernandomv301/AromaTools
 
 theme:
   name: material
   logo: images/group.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
   features:
+    - navigation.footer
     - navigation.sections
     - navigation.expand
     - navigation.top
@@ -24,7 +38,9 @@ nav:
 
   - Methods and references: methods.md
 
-  - FAQ: faq.md
+# The FAQ page is hidden until it has content. To publish it, add "- FAQ: faq.md" to the nav above.
+not_in_nav: |
+  faq.md
 
 markdown_extensions:
   - attr_list

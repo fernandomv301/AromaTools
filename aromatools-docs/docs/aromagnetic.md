@@ -18,7 +18,7 @@ AroMagnetic implements the following magnetic descriptors:
 - NICS-2D
 - NICS-3D
 - INICS (integral NICS)
-- Ring current strength (Ampere–Maxwell law)
+- Ring current strength (Ampère–Maxwell law)
 - MO decomposition of magnetic response (only with Gaussian)
 - pseudo-π model
 
@@ -45,8 +45,8 @@ INPUT.txt
 
 Typical workflow:  
 
-- Prepare calcuation inputs
-- Run Gaussian or Orca
+- Prepare calculation inputs
+- Run Gaussian or ORCA
 - Analyze magnetic response
 
 ## Grid module
@@ -65,7 +65,7 @@ NAME_MOLECULE             mol
 PROGRAM                   Gaussian            # ORCA or GAUSSIAN
 KEYWORD_LINE              Functional/Basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC
 
-PROCS                     16 # Just for Gaussian option, if you want to use Orca, you have to add the procs in the Orca block
+PROCS                     16 # Only used for Gaussian; for ORCA, set the number of processors in BEGIN_ORCA_BLOCK
 MEMORY_GB                 32
 
 CHARGE                    0
@@ -108,9 +108,12 @@ The induced magnetic field, $B^{ind}_{z}$, calculated on the grid can be shown i
 - **Isolines** (contour lines): lines of constant $B^{ind}_{z}$ drawn on a plane, usually a plane perpendicular to the molecular plane that crosses the ring, or a plane parallel to the ring at a given height. They show the sign and the decay of the field in a two-dimensional section.
 - **Isosurfaces**: surfaces of constant $B^{ind}_{z}$ in three dimensions. Two surfaces, one for a positive and one for a negative value, enclose the shielding and the deshielding regions and give a global view of the shape of the response.
 
-#### Published systems
+<!-- The two headings below are hidden until they have content. To publish them, move the
+     heading out of the comment and add the figures under it.
 
-<!-- Add here the figures (isolines and isosurfaces) of systems that have already been published.
+     #### Published systems
+
+     Add here the figures (isolines and isosurfaces) of systems that have already been published.
      For each system, write its name and its reference. Template:
 
      **System name.** Reference: Author, A.; Author, B. *Journal* **Year**, *Volume*, Pages.
@@ -119,10 +122,11 @@ The induced magnetic field, $B^{ind}_{z}$, calculated on the grid can be shown i
      ![Isosurfaces of system](images/name_isosurfaces.png)
 -->
 
-#### Systems not yet published
+<!-- #### Systems not yet published
 
-<!-- Add here the figures of systems whose results have not been published yet.
+     Add here the figures of systems whose results have not been published yet.
      For each system, write its name and, if it applies, a note such as "unpublished results". -->
+
 
 ## Profile module
 ### Input format
@@ -140,7 +144,7 @@ NAME_MOLECULE             mol
 PROGRAM                   Gaussian            # ORCA or GAUSSIAN
 KEYWORD_LINE              Functional/Basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC
 
-PROCS                     16 #If you use Orca this value doesn't apear in the input files
+PROCS                     16 # If you use ORCA, this value doesn't appear in the input files
 MEMORY_GB                 32
 
 CHARGE                    0
@@ -200,7 +204,7 @@ NAME_MOLECULE             mol
 PROGRAM                   Gaussian            # ORCA or GAUSSIAN
 KEYWORD_LINE              Functional/Basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC
 
-PROCS                     16 #If you use Orca this value doesn't apear in the input files
+PROCS                     16 # If you use ORCA, this value doesn't appear in the input files
 MEMORY_GB                 32
 
 CHARGE                    0
@@ -251,7 +255,7 @@ When the model is requested, AroMagnetic modifies the quantum chemistry inputs t
 - the ghost atoms of the grid or of the profiles, and the atoms marked as dummy (for example `H:`), are kept;
 - the rest of the input (keywords, basis set) is not changed.
 
-The model is valid only for molecules that contain just carbon and hydrogen (or just carbon as fullerene $\ce{C60}$). If other elements are present, the model is skipped and a warning is printed. When it is applied, the program prints `PSEUDO-π model was applied!`.
+The model is valid only for molecules that contain just carbon and hydrogen (or only carbon, such as fullerene $\ce{C60}$). If other elements are present, the model is skipped and a warning is printed. When it is applied, the program prints `PSEUDO-π model was applied!`.
 
 ### How to use it
 
@@ -265,8 +269,8 @@ It works with the Grid module and with the profile modules. Then follow the usua
 
 To compare the π contribution with the complete response, run the same system again with `PSEUDO_PI NO`, in another folder.
 
-## Interfaz with Orca
-### Orca section
+## Interface with ORCA
+### ORCA section
 
 ```text
 # --------------------------------
@@ -290,7 +294,7 @@ END_ORCA_BLOCK
 ## How to run AroMagnetic?
 
 1. Prepare your `INPUT.txt` file and your molecular structure file (XYZ format).
-    - If you are using generic databases in your calculations, you must create the *basis.txt* file and enter your database, leaving two spaces at the end of the file.
+    - If you are using a custom/generic basis set (`Gen`) in your calculations, you must create a `basis.txt` file containing your basis set definition, leaving two blank lines at the end of the file.
 2. Generate the quantum chemistry input files:
 ```text
 amg run
@@ -300,9 +304,9 @@ amg run
 ```text
 amg get
 ```
-This command generates .cube files (and .vtk files if selected in INPUT.txt), .csv files and/or graph, depending on the module you've chosen.
+This command generates .cube files (and .vtk files if selected in INPUT.txt), .csv files and/or plots (or graphs), depending on the module you've chosen.
 
-**Molecular orbital decomposition of the shielding tensor (Gaussian only)**
+### Molecular orbital decomposition of the shielding tensor (Gaussian only)
 
 To compute molecular orbital contributions to the shielding tensor, follow these steps (This module works with NBO6).
 
@@ -320,7 +324,7 @@ amg run
 amg mo
 ```
 
-**Available commands**
+### Available commands
 
 The commands that read the input file (`amg run`, `amg get`, `amg mo` and `amg rings`) must be run from the folder that contains it. The program can be called with `amg` or with `aromagnetic`; the two names are equivalent.
 

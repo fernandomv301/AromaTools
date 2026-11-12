@@ -19,7 +19,7 @@ AromaTools integrates multiple descriptors commonly used to characterize aromati
 
 **Geometric criteria**  
 
-- HOMA  
+- HOMA93  
 - HOMAc  
 - HOMER  
 - BLA (Bond Length Alternation)
@@ -42,7 +42,8 @@ AromaTools integrates multiple descriptors commonly used to characterize aromati
 - PDI (para-delocalization index)  
 - FLU (aromatic fluctuation index)  
 - AV1245 and AVmin  
-- BOA (bond-order alternation)  
+- BOA and BOAc (bond-order alternation)  
+- DI (delocalization indices) and atomic populations  
 - Atomic partitions: meta-Löwdin, NAO, IAO, Löwdin, Mulliken and QTAIM (from AIMAll files)  
 - Wavefunction from PySCF or from a file (.fchk, .molden and other formats readable by IOData)  
 
@@ -59,7 +60,7 @@ The code is designed to minimize manual intervention and reduce sources of error
 - Automatic molecular orientation based on principal moments of inertia
 - Automated preparation of quantum chemistry inputs
 - Automatic post-processing of outputs
-- Automatic generation of plots and tables in format .csv
+- Automatic generation of plots and tables in `.csv` format
 
 This approach improves reproducibility and allows users to focus on chemical interpretation rather than technical setup.
 
@@ -89,27 +90,27 @@ The software is particularly suited for studies involving:
 
 - **Fernando Martínez-Villarino**  
 Computational Physical Chemistry  
-Doctoral student in Cinvestav - Mérida, México
+Doctoral student at Cinvestav - Mérida, Mexico
 
-- **Joan Grebol-Tomas**  
+- **Joan Grèbol-Tomàs**  
 Computational Chemistry  
-Doctoral student in Universitat de Girona - Girona, España
+Doctoral student at Universitat de Girona - Girona, Spain
 
 - **Mesías Orozco-Ic**  
 Computational Physical Chemistry  
-Posdoctoral researcher in Cinvestav - Mérida, México
+Postdoctoral researcher at Cinvestav - Mérida, Mexico
 
 - **Pedro Salvador**  
 Computational Chemistry  
-Research professor in Universitat de Girona - Girona, España
+Research professor at Universitat de Girona - Girona, Spain
 
 - **Eduard Matito**  
 Computational Chemistry  
-Research professor in Donostia International Physics Center - Donostia, España
+Research professor at Donostia International Physics Center - Donostia, Spain
 
 - **Gabriel Merino**  
 Computational Physical Chemistry  
-Researcher professor in Cinvestav - Mérida, México
+Research professor at Cinvestav - Mérida, Mexico
 
 ---
 
@@ -119,7 +120,7 @@ AromaTools integrates methods developed by different research groups. Each metho
 
 If you use AromaTools in your research, please cite:
 
-Martínez-Villarino, F.; Grebol-Tomas, J.; Salvador, P.; Orozco-Ic, M.; Matito, E.; Merino, G. AromaTools 1.0, Cinvestav - DIPC, Mérida, Mexico, 2026.
+Martínez-Villarino, F.; Grèbol-Tomàs, J.; Salvador, P.; Orozco-Ic, M.; Matito, E.; Merino, G. AromaTools 1.0, Cinvestav - DIPC, Mérida, Mexico, 2026.
 
 ---
 
@@ -139,9 +140,9 @@ Planned improvements for upcoming versions include:
 Planned improvements for upcoming versions include:
 
 - Implementation of workflows compatible with **Turbomole**
-- Calculation of **Bind** and **NICS** decomposed by molecular orbital (MO) with Orca
+- Calculation of **Bind** and **NICS** decomposed by molecular orbital (MO) with ORCA
 - Implementation of the **NICS2BC** methodology for visualization of current pathways derived from NICS data
-- Improved exploitation of **molecular symmetry** in profile module and **NICS-scan**
+- Improved exploitation of **molecular symmetry** in the profile module and **NICS-scan**
 - Reading files (.out, .log) in ORCA, Gaussian, and ASE-compatible formats
 
 These developments aim to improve the interpretation of magnetic response descriptors and facilitate the connection between molecular electronic structure and aromatic behavior.

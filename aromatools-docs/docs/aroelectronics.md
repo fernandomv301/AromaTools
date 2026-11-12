@@ -78,7 +78,7 @@ The program can be called with `ael` or with `aroelectronics`; the two names are
 ael run benzene.txt
 ```
 
-**Available commands**
+### Available commands
 
 | Command | Description |
 |---------|-------------|
@@ -86,6 +86,8 @@ ael run benzene.txt
 | `ael help` | Shows the list of commands (the same happens when `ael` is run with no arguments) |
 
 The form `aroelectronics INPUT.txt`, without the word `run`, also works.
+
+### Input modes
 
 There are three ways of obtaining the atomic overlap matrices: from a PySCF calculation, from a wavefunction file, or from the atomic files of a QTAIM calculation with AIMAll (see [QTAIM](#qtaim)).
 
@@ -166,7 +168,7 @@ The file must contain the molecular orbitals and the basis set. A closed-shell w
 | `mulliken` | Mulliken partition |
 | `qtaim` | Real-space partition of the Quantum Theory of Atoms in Molecules, read from AIMAll files (see [QTAIM](#qtaim)) |
 
-The three first partitions (`meta-lowdin`, `nao`, `iao`) are recommended: their indices are largely independent of the basis set. Mulliken and Löwdin depend strongly on it and are included mainly for comparison.
+The first three partitions (`meta-lowdin`, `nao`, `iao`) are recommended: their indices are largely independent of the basis set. Mulliken and Löwdin depend strongly on it and are included mainly for comparison.
 
 ### QTAIM
 
