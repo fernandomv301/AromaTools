@@ -58,7 +58,7 @@ $I_{ring}$, MCI and AV1245 are reported also in the normalized form $x^{1/n}$, w
 **Limitations by ring size**
 
 - PDI is defined only for six-membered rings.
-- AV1245 and AVmin require rings of at least six atoms.
+- AV1245 and AVmin require rings of at least six atoms; for smaller rings the program reports `N/A`.
 - The cost of MCI grows factorially with the number of ring atoms; it is reported as `N/A` for rings of more than 12 atoms. AV1245 and AVmin are the alternatives for large rings.
 - FLU needs a reference DI for every type of bond in the ring (CC, CN, BN, NN, CS, CO).
 

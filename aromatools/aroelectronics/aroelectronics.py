@@ -149,6 +149,21 @@ def _run_esi_qtaim(aom, rings, molinfo):
     return ESI(aom=aom, rings=rings, partition="qtaim", molinfo=molinfo)
 
 
+def _av_values(ind, ring):
+    """AV1245 and AVmin, or (None, None) for rings of fewer than 6 atoms (the 1-2-4-5 pattern
+    needs at least six centers; in smaller rings atoms are repeated and the value has no meaning)."""
+    if len(ring) < 6:
+        return None, None
+    return getattr(ind, "av1245", None), getattr(ind, "avmin", None)
+
+
+def _av_text(ind, ring):
+    if len(ring) < 6:
+        return "AV1245 = N/A   AVmin = N/A  (ring < 6 atoms)"
+    av, avm = _av_values(ind, ring)
+    return f"AV1245   = {_fmt(av)}   AVmin = {_fmt(avm)}"
+
+
 def _fmt(val, decimals=6):
     if val is None:
         return "N/A"
@@ -229,9 +244,7 @@ def _print_results(esi, rings, want_iring, want_mci, want_pdi, want_flu, want_av
         if want_flu:
             print(f"    FLU      = {_fmt(ind.flu)}")
         if want_av1245:
-            av  = getattr(ind, "av1245", None)
-            avm = getattr(ind, "avmin",  None)
-            print(f"    AV1245   = {_fmt(av)}   AVmin = {_fmt(avm)}")
+            print(f"    {_av_text(ind, ring)}")
         if want_boa:
             print(f"    BOA      = {_fmt(getattr(ind, 'boa', None))}   BOAc = {_fmt(getattr(ind, 'boa_c', None))}")
 
@@ -293,9 +306,7 @@ def _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
         if want_flu:
             lines.append(f"    FLU      = {_fmt(ind.flu)}")
         if want_av1245:
-            av  = getattr(ind, "av1245", None)
-            avm = getattr(ind, "avmin",  None)
-            lines.append(f"    AV1245   = {_fmt(av)}   AVmin = {_fmt(avm)}")
+            lines.append(f"    {_av_text(ind, ring)}")
         if want_boa:
             lines.append(f"    BOA      = {_fmt(getattr(ind, 'boa', None))}   BOAc = {_fmt(getattr(ind, 'boa_c', None))}")
     lines.append("")
@@ -367,8 +378,8 @@ def _save_results(name, partition, rings, esi, want_iring, want_mci, want_pdi, w
         files.append(fname)
 
     if want_av1245:
-        rows  = [(i + 1, _fmt(getattr(ind, "av1245", None)), _fmt(getattr(ind, "avmin", None)))
-                 for i, (_, ind) in enumerate(zip(rings, inds))]
+        rows  = [(i + 1, *(_fmt(v) for v in _av_values(ind, r)))
+                 for i, (r, ind) in enumerate(zip(rings, inds))]
         fname = f"{name}_{partition}_av1245.csv"
         _write_csv(fname, "Ring,AV1245,AVmin", rows)
         files.append(fname)
