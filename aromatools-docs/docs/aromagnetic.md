@@ -35,6 +35,27 @@ AroMagnetic implements the following magnetic descriptors:
 
 ---
 
+## What do you create using AroMagnetic module?
+
+With AroMagnetic you can generate the scalar fields of $B^{ind}_{z}$ and NICS as `.cube` or `.vtk` files, and visualize them in your favorite software (for example VMD or ParaView). From these files you can draw isosurfaces, which show the shape of the magnetic response in three dimensions, or isolines on a plane, which show its sign and decay in a two-dimensional section. The following figures were created from the files that AroMagnetic generates; blue regions correspond to negative values (shielding) and red regions to positive values (deshielding).
+
+### Isosurfaces
+
+Isosurfaces of $B^{ind}_{z}$ (left) and NICS (right) of [10]annulene, from the `.cube` files. The isovalues are chosen in the visualization software and those values are -20 and 10 ppm.
+
+![Isosurfaces of Bind_z of [10]annulene](images/bind_10annulene_isosurfaces.png){ width="48%" }
+![Isosurfaces of NICS of [10]annulene](images/nics_10annulene_isosurfaces.png){ width="48%" }
+
+### Isolines
+
+Isolines of $B^{ind}_{z}$ and NICS of [18]annulene, seen from above (left of each figure) and from the side (right of each figure). The color scale goes from -20 to 10 ppm.
+
+![Isolines of Bind_z of [18]annulene](images/bind_18annulene_isolines.png)
+
+![Isolines of NICS of [18]annulene](images/nics_18annulene_isolines.png)
+
+---
+
 ## General workflow
 
 AroMagnetic operates using an input file:
