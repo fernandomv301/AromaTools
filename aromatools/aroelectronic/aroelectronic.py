@@ -18,7 +18,7 @@ SUPPORTED_PARTITIONS = {"meta-lowdin", "nao", "iao", "mulliken", "lowdin", "qtai
 
 BANNER = r"""
 ======================================================================
-                         AROELECTRONICS
+                         AROELECTRONIC
           Electronic Criteria for Aromaticity Evaluation
 ======================================================================
 
@@ -262,7 +262,7 @@ def _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
     inds = esi.indicators
     lines = []
     lines.append("=" * 60)
-    lines.append(f"  AroElectronics — {name}")
+    lines.append(f"  AroElectronic — {name}")
     lines.append("=" * 60)
     lines.append("")
     lines.append("Calculation setup")
@@ -533,7 +533,7 @@ Commands:
 
 def dispatch(args):
     """
-    args = sys.argv[1:]   (everything after the 'ael' / 'aroelectronics' executable name)
+    args = sys.argv[1:]   (everything after the 'ael' / 'aroelectronic' executable name)
     """
     if not args:
         print(BANNER)
@@ -553,7 +553,7 @@ def dispatch(args):
         print(_USAGE)
 
     elif not rest and os.path.isfile(cmd):
-        run(cmd)    # previous form: aroelectronics INPUT.txt
+        run(cmd)    # previous form: aroelectronic INPUT.txt
 
     else:
         raise SystemExit(f"Unknown command: '{cmd}'\n\n{_USAGE}")

@@ -32,5 +32,5 @@ dependencies = [
 amg            = "aromatools.aromagnetic.aromagnetic:main"
 aromagnetic    = "aromatools.aromagnetic.aromagnetic:main"
 arogeometric   = "aromatools.arogeometric.arogeometric:main"
-aroelectronics = "aromatools.aroelectronics.aroelectronics:main"
-ael            = "aromatools.aroelectronics.aroelectronics:main"
+aroelectronic  = "aromatools.aroelectronic.aroelectronic:main"
+ael            = "aromatools.aroelectronic.aroelectronic:main"

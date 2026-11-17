@@ -18,7 +18,7 @@ AroGeometric automatically:
 - Saves results as CSV files
 - Produces graphical representations of cyclic systems
 
-Only molecular geometry is required as input.
+Only the molecular geometry is required as input. AroGeometric analyzes rings; open chains are not supported.
 
 Supported file formats:
 
@@ -32,10 +32,10 @@ Supported file formats:
 
 The following geometric descriptors are implemented:
 
-- HOMA93
-- HOMAc
-- HOMER
-- BLA (Bond Length Alternation)
+- HOMA93: harmonic oscillator model of aromaticity (HOMA) with the original, experimental parameters
+- HOMAc: HOMA reparameterized with aromatic and antiaromatic reference systems
+- HOMER: HOMA reparameterized for the lowest triplet excited state (T₁)
+- BLA: bond-length alternation
 
 These indices quantify aromaticity through the degree of bond-length equalization in cyclic systems.
 
@@ -43,7 +43,7 @@ These indices quantify aromaticity through the degree of bond-length equalizatio
 
 ## Quick start
 
-AroGeometric runs directly from the terminal. No scripting required.
+AroGeometric runs directly from the terminal; no scripting is required.
 
 ### Run the program
 
@@ -59,7 +59,7 @@ python3 arogeometric.py
 
 ### Provide the required inputs
 
-The program will ask for two things:
+The program prompts for the following information:
 
 ```
 Output file (Gaussian or ORCA): benzene.log
@@ -69,7 +69,7 @@ Index type [HOMA/HOMER]: HOMA
 | Input | Description |
 |-------|-------------|
 | Output file | Path to your Gaussian (`.log`), ORCA (`.out`), or XYZ (`.xyz`) file |
-| Index type | `HOMA` for ground state (S₀) or `HOMER` for excited state (T₁) |
+| Index type | `HOMA` for the ground state (S₀) or `HOMER` for the lowest triplet state (T₁) |
 
 ### Results
 
@@ -80,7 +80,7 @@ benzene_indices.csv
 benzene_bonds.csv
 ```
 
-The program then asks if you want to open the interactive 3D visualization:
+The program then asks whether you want to open the interactive 3D visualization:
 
 ```
 Show 3D visualization? [y/n]:
@@ -92,13 +92,13 @@ Show 3D visualization? [y/n]:
 
 The module follows these steps:
 
-1. Read molecular geometry from the input file.
+1. Read the molecular geometry from the input file.
 2. Build the molecular graph based on covalent radii.
-3. Detect rings (up to 8-membered rings).
+3. Detect rings (up to 8-membered).
 4. Compute bond distances.
 5. Evaluate aromaticity indices.
-6. Print and save results.
-7. Generate visualization (optional).
+6. Print and save the results.
+7. Generate the visualization (optional).
 
 ---
 
@@ -106,7 +106,7 @@ The module follows these steps:
 
 ### HOMA index
 
-The harmonic oscillator model of aromaticity is defined as:
+The harmonic oscillator model of aromaticity (HOMA) index is defined as:
 
 $$
 HOMA = 1 - \frac{1}{n}\sum_{i=1}^{n} \alpha (R_i - R_{opt})^2
@@ -115,11 +115,21 @@ $$
 where:
 
 - $n$ is the number of bonds
-- $R_i$ is the bond length
+- $R_i$ is the length of bond $i$
 - $R_{opt}$ is the optimal aromatic bond length
 - $\alpha$ is a normalization constant
 
 HOMA values close to 1 indicate aromatic character, values near 0 correspond to non-aromatic systems, and negative values indicate antiaromaticity.
+
+### BLA index
+
+Bond-length alternation is computed as the average of the absolute differences between the lengths of consecutive bonds of the ring:
+
+$$
+BLA = \frac{1}{n}\sum_{i=1}^{n} \left| R_i - R_{i+1} \right|, \qquad R_{n+1} \equiv R_1
+$$
+
+where $n$ is the number of bonds of the ring. BLA is zero when all the bonds have the same length and increases with the degree of bond alternation. Because it is built from consecutive differences, it does not depend on which bond is numbered first.
 
 ---
 
@@ -172,7 +182,7 @@ Printed to the screen and saved as `<filename>_indices.csv`.
 | HOMA93 | HOMA index with experimental parameters |
 | HOMAc | HOMA index with computational parameters |
 | HOMER | HOMER index (only when `index_type="HOMER"`) |
-| BLA | Bond Length Alternation |
+| BLA | Bond-length alternation |
 
 HOMA93 and HOMAc are both reported when `index_type="HOMA"`. Only HOMER is reported when `index_type="HOMER"`.
 
@@ -184,13 +194,13 @@ Printed to the screen and saved as `<filename>_bonds.csv`.
 | Column | Description |
 |--------|-------------|
 | Ring | Ring identifier |
-| Type_Bond | Bond type (e.g. CC, CN, CO) |
-| Length (Å) | Bond length in Ångströms |
+| Type_Bond | Bond type (e.g., CC, CN, CO) |
+| Length (Å) | Bond length in ångströms |
 
 
 ### Graphical output
 
-If the 3D visualization is requested, an interactive plot opens in the browser showing:
+If the 3D visualization is requested, an interactive plot opens in your web browser, showing:
 
 - Molecular connectivity
 - Detected rings with their index values

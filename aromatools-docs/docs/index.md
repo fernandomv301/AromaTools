@@ -6,9 +6,9 @@
 
 **AromaTools** is a computational toolkit designed to facilitate the analysis of aromaticity using complementary geometric, magnetic and electronic criteria.
 
-The software integrates widely used descriptors into a unified and user-friendly workflow, allowing researchers to evaluate aromatic behavior in molecular systems in a reproducible and systematic manner.
+The software integrates widely used descriptors into a unified and user-friendly workflow, allowing researchers to evaluate aromaticity in molecular systems systematically and reproducibly.
 
-Aromaticity is not a directly observable physical property, but rather a conceptual framework inferred from different manifestations of electron delocalization. Because no single descriptor fully captures this phenomenon, reliable analysis typically requires the combined use of multiple criteria. AromaTools aims to simplify this process by providing automated workflows for the calculation and analysis of aromaticity indices derived from molecular structure, magnetic response and electron delocalization.
+Aromaticity is not a directly observable physical property, but rather a conceptual framework inferred from different manifestations of electron delocalization. Because no single descriptor fully captures this phenomenon, reliable analysis typically requires the combined use of multiple criteria. AromaTools aims to simplify this process by providing automated workflows for the calculation and analysis of aromaticity indices derived from molecular structure, magnetic response, and electron delocalization.
 
 ---
 
@@ -19,19 +19,19 @@ AromaTools integrates multiple descriptors commonly used to characterize aromati
 
 **Geometric criteria**  
 
-- HOMA93  
-- HOMAc  
-- HOMER  
-- BLA (Bond Length Alternation)
+- HOMA93 (harmonic oscillator model of aromaticity, original parameters)  
+- HOMAc (HOMA reparameterized with aromatic and antiaromatic reference systems)  
+- HOMER (HOMA reparameterized for the lowest triplet excited state)  
+- BLA (bond-length alternation)
 
 **Magnetic criteria**   
 
-- NICS (SP, 2D, 3D)  
+- NICS (nucleus-independent chemical shift: SP, 2D, 3D)  
 - NICS-scan  
 - Integral NICS (INICS)  
 - Induced magnetic field (Bind)  
 - Ring current strength (Ampère–Maxwell approach)  
-- Molecular orbital decomposition of the shielding tensor (Only with Gaussian)  
+- Molecular orbital decomposition of the shielding tensor (Gaussian only)  
 - Pseudo-π model implementation for π-electron magnetic response analysis  
 - Generation of scalar fields (.cube) and visualization grids (.vtk)  
 
@@ -41,13 +41,15 @@ AromaTools integrates multiple descriptors commonly used to characterize aromati
 - MCI (multicenter index)  
 - PDI (para-delocalization index)  
 - FLU (aromatic fluctuation index)  
-- AV1245 and AVmin  
+- AV1245 and AV<sub>min</sub> (average and minimum of the four-center indices, for large rings)  
 - BOA and BOAc (bond-order alternation)  
 - DI (delocalization indices) and atomic populations  
-- Atomic partitions: meta-Löwdin, NAO, IAO, Löwdin, Mulliken and QTAIM (from AIMAll files)  
-- Wavefunction from PySCF or from a file (.fchk, .molden and other formats readable by IOData)  
+- Atomic partitions: meta-Löwdin, NAO (natural atomic orbitals), IAO (intrinsic atomic orbitals), Löwdin, Mulliken, and QTAIM (quantum theory of atoms in molecules, from AIMAll files)  
+- Wavefunctions from PySCF or from files (.fchk, .molden and other formats readable by IOData)  
 
-These descriptors provide complementary perspectives on electron delocalization in cyclic systems.
+The electronic indices are computed with [ESIpy](https://github.com/jgrebol/ESIpy); AroElectronic prepares the wavefunction and the atomic partition and runs ESIpy.  
+
+These descriptors provide complementary perspectives on electron delocalization in cyclic systems. The geometric and electronic criteria analyze rings; open chains are not supported.
 
 ---
 
@@ -126,7 +128,7 @@ Martínez-Villarino, F.; Grèbol-Tomàs, J.; Salvador, P.; Orozco-Ic, M.; Matito
 
 ## Future developments
 
-AromaTools is under active development and several new features are currently being implemented in order to expand the scope of aromaticity analysis.
+AromaTools is under active development and several new features are currently being implemented to expand the scope of aromaticity analysis.
 
 **AroGeometric**
 
@@ -141,18 +143,18 @@ Planned improvements for upcoming versions include:
 
 - Implementation of workflows compatible with **Turbomole**
 - Calculation of **Bind** and **NICS** decomposed by molecular orbital (MO) with ORCA
-- Implementation of the **NICS2BC** methodology for visualization of current pathways derived from NICS data
+- Implementation of the **NICS2BC** methodology for the visualization of current pathways derived from NICS data
 - Improved exploitation of **molecular symmetry** in the profile module and **NICS-scan**
-- Reading files (.out, .log) in ORCA, Gaussian, and ASE-compatible formats
+- Support for reading output files (.out, .log) from ORCA and Gaussian, and other ASE-compatible formats
 
 These developments aim to improve the interpretation of magnetic response descriptors and facilitate the connection between molecular electronic structure and aromatic behavior.
 
 ---
 
-**AroElectronics**
+**AroElectronic**
 
-The electronic criteria are now available in the AroElectronics module, which allows AromaTools to provide a unified framework combining geometric, magnetic and electronic criteria. This integration helps to compare the different aromaticity criteria and provides deeper insight into the nature of cyclic electron delocalization.
+The electronic criteria are now available in the AroElectronic module, which uses [ESIpy](https://github.com/jgrebol/ESIpy) to compute the indices and allows AromaTools to provide a unified framework combining geometric, magnetic, and electronic criteria. This integration facilitates comparison of the different aromaticity criteria and provides deeper insight into the nature of cyclic electron delocalization.
 
 ---
 
-AromaTools continues evolving toward a unified platform for multidimensional aromaticity analysis.
+AromaTools continues to evolve toward a unified platform for multidimensional aromaticity analysis.

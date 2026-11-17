@@ -13,7 +13,7 @@ Numbers in brackets refer to the [reference list](#reference-list) at the end of
 | HOMA93 | Harmonic oscillator model of aromaticity, based on bond-length equalization | [1,2,3] |
 | HOMAc | HOMA reparameterized with aromatic **and antiaromatic** reference systems | [4] |
 | HOMER | HOMA reparameterized for the excited state (T₁) | [5] |
-| BLA | Bond length alternation: difference between the lengths of consecutive bonds of the ring | [6] |
+| BLA | Bond-length alternation: difference between the lengths of consecutive bonds of the ring | [6] |
 
 ---
 
@@ -36,9 +36,9 @@ Numbers in brackets refer to the [reference list](#reference-list) at the end of
 
 ---
 
-## AroElectronics
+## AroElectronic
 
-AroElectronics **does not reimplement the electronic indices**. It imports from [ESIpy](https://github.com/jgrebol/ESIpy) the functions needed to build the atomic overlap matrices and to compute the indices (`ESI`, the wavefunction reader and the reader of AIMAll files), and adds the AromaTools workflow around them: the `INPUT.txt` file, the detection of rings, the selection of indices and partitions, and the output files. The values obtained with AroElectronics are therefore those of ESIpy [23], and the works in which the indices and partitions were introduced must be cited.
+AroElectronic **does not reimplement the electronic indices**. It imports from [ESIpy](https://github.com/jgrebol/ESIpy) the functions needed to build the atomic overlap matrices and to compute the indices (`ESI`, the wavefunction reader and the reader of AIMAll files), and adds the AromaTools workflow around them: the `INPUT.txt` file, the detection of rings, the selection of indices and partitions, and the output files. The values obtained with AroElectronic are therefore those of ESIpy [23], and the works in which the indices and partitions were introduced must be cited.
 
 ### Indices
 
@@ -50,7 +50,7 @@ AroElectronics **does not reimplement the electronic indices**. It imports from 
 | PDI | Para-delocalization index (six-membered rings) | [27] |
 | FLU | Aromatic fluctuation index | [28] |
 | AV1245 | Average of the four-center indices of atoms 1-2-4-5 of the ring, for large rings | [29] |
-| AVmin | Minimum of the four-center indices of atoms 1-2-4-5 of the ring | [39] |
+| AV<sub>min</sub> | Minimum of the four-center indices of atoms 1-2-4-5 of the ring | [39] |
 | BOA | Bond-order alternation, the electronic counterpart of BLA (uses the DI instead of the bond length) | [6] |
 
 ### Atomic partitions

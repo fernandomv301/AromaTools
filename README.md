@@ -43,7 +43,7 @@ Interpretation:
 
 ---
 
-### Electronic Criteria (AroElectronics)
+### Electronic Criteria (AroElectronic)
 
 - Iring (multicenter bond index)
 - MCI (multicenter index)
@@ -61,7 +61,7 @@ meta-Löwdin, NAO, IAO, Löwdin or Mulliken atomic partitions (or QTAIM):
 ael run
 ```
 
-(`ael` and `aroelectronics` are the same command; `ael run` reads `INPUT.txt` from the current folder.)
+(`ael` and `aroelectronic` are the same command; `ael run` reads `INPUT.txt` from the current folder.)
 
 ---
 
