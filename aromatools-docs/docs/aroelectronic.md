@@ -142,7 +142,7 @@ Everything after `#` on a line is ignored. Keywords are case-insensitive.
 | `WAVEFUNCTION_FILE` | Wavefunction file (file mode), see [Wavefunction files](#wavefunction-files) | none |
 | `PARTITION` | Atomic partition (see below) | `meta-lowdin` |
 | `ATOMICFILES_PATH` | Folder with the AIMAll `.int` files (only with `PARTITION qtaim`), see [QTAIM](#qtaim) | none |
-| `RING` | Atom numbers of **one** ring, **in cyclic order**, starting at 1 | all rings are detected |
+| `RING` | Atom numbers of **one** ring (or of any path of atoms that you want to study), **in the order to follow**, starting at 1 | all rings are detected |
 | `IRING`, `MCI`, `PDI`, `FLU`, `AV1245`, `BOA`, `DI`, `POPULATIONS` | `YES` to compute the index (`AV1245` also gives AV<sub>min</sub>, and `BOA` also gives BOAc). `DI` gives the delocalization indices of the ring bonds and `POPULATIONS` the atomic populations of the ring atoms | `NO` |
 
 At least one index must be requested.
@@ -205,6 +205,8 @@ Real-space partitions are much more computationally expensive than Hilbert-space
 If `RING` is not specified, all the rings of the molecule are detected from the covalent radii (a pair of atoms is bonded if their distance is below 1.3 times the sum of their covalent radii) and the indices are computed for each of them. The atoms of each ring are listed in cyclic order.
 
 To analyze a specific ring, list its atoms with `RING`. The atoms must be written **in the order in which they are connected around the ring**, because the multicenter indices depend on that order. For benzene, for example, `1 2 6 10 7 3` is a valid order only if atom 1 is bonded to atom 2, atom 2 to atom 6, and so on, and atom 3 is bonded back to atom 1.
+
+`RING` is not limited to rings of the molecule: you can also list any path of atoms that you want to follow (for example, the atoms of a conjugated chain), and the indices are computed for the atoms in the order written.
 
 ---
 

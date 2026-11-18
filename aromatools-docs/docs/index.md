@@ -29,7 +29,7 @@ AromaTools integrates multiple descriptors commonly used to characterize aromati
 - NICS (nucleus-independent chemical shift: SP, 2D, 3D)  
 - NICS-scan  
 - Integral NICS (INICS)  
-- Induced magnetic field (Bind)  
+- Induced magnetic field (B<sup>ind</sup>)  
 - Ring current strength (Ampère–Maxwell approach)  
 - Molecular orbital decomposition of the shielding tensor (Gaussian only)  
 - Pseudo-π model implementation for π-electron magnetic response analysis  
@@ -37,7 +37,7 @@ AromaTools integrates multiple descriptors commonly used to characterize aromati
 
 **Electronic criteria**  
 
-- Iring (multicenter bond index)  
+- I<sub>ring</sub> (multicenter bond index)  
 - MCI (multicenter index)  
 - PDI (para-delocalization index)  
 - FLU (aromatic fluctuation index)  
@@ -49,7 +49,7 @@ AromaTools integrates multiple descriptors commonly used to characterize aromati
 
 The electronic indices are computed with [ESIpy](https://github.com/jgrebol/ESIpy); AroElectronic prepares the wavefunction and the atomic partition and runs ESIpy.  
 
-These descriptors provide complementary perspectives on electron delocalization in cyclic systems. The geometric and electronic criteria analyze rings; open chains are not supported.
+These descriptors provide complementary perspectives on electron delocalization in molecules. The geometric criteria are defined for rings; the electronic criteria can follow any path of atoms that you specify; and the magnetic grid can be computed for any molecule, whereas the profile module requires a ring.
 
 ---
 

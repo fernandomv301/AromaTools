@@ -18,7 +18,7 @@ AroGeometric automatically:
 - Saves results as CSV files
 - Produces graphical representations of cyclic systems
 
-Only the molecular geometry is required as input. AroGeometric analyzes rings; open chains are not supported.
+Only the molecular geometry is required as input. The geometric indices are defined for rings, so open chains are not supported.
 
 Supported file formats:
 
