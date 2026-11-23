@@ -258,10 +258,11 @@ def _write_csv(fname, header, rows):
             f.write(",".join(str(x) for x in row) + "\n")
 
 
-def _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
+def _write_txt(name, done, data, wf_file, xyz_file, rings,
                want_iring, want_mci, want_pdi, want_flu, want_av1245, csv_files, want_boa=False,
-               want_di=False, want_pop=False, symbols=None):
-    inds = esi.indicators
+               want_di=False, want_pop=False, symbols=None, summary_lines=None):
+    """One .txt with the results of ALL the partitions that were computed."""
+    partitions = [p for p, _ in done]
     lines = []
     lines.append("=" * 60)
     lines.append(f"  AroElectronic — {name}")
@@ -269,48 +270,64 @@ def _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
     lines.append("")
     lines.append("Calculation setup")
     lines.append("-" * 30)
-    if partition == "qtaim":
-        lines.append(f"  Mode              : QTAIM (AIMAll atomic files)")
+    if any(p != "qtaim" for p in partitions):
+        if wf_file:
+            lines.append(f"  Mode              : wavefunction file")
+            lines.append(f"  Wavefunction file : {wf_file}")
+        else:
+            lines.append(f"  Mode              : PySCF (from scratch)")
+            lines.append(f"  Coordinates       : {xyz_file}")
+            lines.append(f"  Functional        : {data.get('FUNCTIONAL', '')}")
+            lines.append(f"  Basis set         : {data.get('BASIS_SET', '')}")
+            lines.append(f"  Charge            : {data.get('CHARGE', 0)}")
+            lines.append(f"  Multiplicity      : {data.get('MULTIPLICITY', 1)}")
+    if "qtaim" in partitions:
+        lines.append(f"  QTAIM             : AIMAll atomic files")
         lines.append(f"  Atomic files      : {data.get('ATOMICFILES_PATH', '')}")
-    elif wf_file:
-        lines.append(f"  Mode              : wavefunction file")
-        lines.append(f"  Wavefunction file : {wf_file}")
-    else:
-        lines.append(f"  Mode              : PySCF (from scratch)")
-        lines.append(f"  Coordinates       : {xyz_file}")
-        lines.append(f"  Functional        : {data.get('FUNCTIONAL', '')}")
-        lines.append(f"  Basis set         : {data.get('BASIS_SET', '')}")
-        lines.append(f"  Charge            : {data.get('CHARGE', 0)}")
-        lines.append(f"  Multiplicity      : {data.get('MULTIPLICITY', 1)}")
-    lines.append(f"  Partition         : {partition}")
+    lines.append(f"  Partition{'s' if len(partitions) > 1 else ' '}        : {', '.join(partitions)}")
     lines.append("")
     lines.append("Rings")
     lines.append("-" * 30)
     for i, ring in enumerate(rings):
         lines.append(f"  Ring {i + 1}: {'-'.join(str(a) for a in ring)}")
-    lines.append("")
-    lines.append("Aromaticity indices")
-    lines.append("-" * 30)
-    for i, (ring, ind) in enumerate(zip(rings, inds)):
-        ring_str = "-".join(str(a) for a in ring)
-        lines.append(f"\n  Ring {i + 1}: [{ring_str}]")
-        if want_di or want_pop:
-            lines.extend(_di_pop_lines(esi, ring, symbols, want_di, want_pop))
-        if want_iring:
-            lines.append(f"    Iring    = {_fmt(ind.iring)}   (^1/n = {_fmt(_iring_n(ind, ring))})")
-        if want_mci:
-            if ind.mci is not None:
-                lines.append(f"    MCI      = {_fmt(ind.mci)}   (^1/n = {_fmt(_mci_n(ind, ring))})")
-            else:
-                lines.append(f"    MCI      = N/A  (ring > 12 atoms)")
-        if want_pdi:
-            lines.append(f"    PDI      = {_fmt(ind.pdi) if ind.pdi is not None else 'N/A (not 6-membered)'}")
-        if want_flu:
-            lines.append(f"    FLU      = {_fmt(ind.flu)}")
-        if want_av1245:
-            lines.append(f"    {_av_text(ind, ring)}")
-        if want_boa:
-            lines.append(f"    BOA      = {_fmt(getattr(ind, 'boa', None))}   BOAc = {_fmt(getattr(ind, 'boa_c', None))}")
+
+    for partition, esi in done:
+        inds = esi.indicators
+        lines.append("")
+        lines.append("=" * 60)
+        lines.append(f"  Partition: {partition}")
+        lines.append("=" * 60)
+        lines.append("")
+        lines.append("Aromaticity indices")
+        lines.append("-" * 30)
+        for i, (ring, ind) in enumerate(zip(rings, inds)):
+            ring_str = "-".join(str(a) for a in ring)
+            lines.append(f"\n  Ring {i + 1}: [{ring_str}]")
+            if want_di or want_pop:
+                lines.extend(_di_pop_lines(esi, ring, symbols, want_di, want_pop))
+            if want_iring:
+                lines.append(f"    Iring    = {_fmt(ind.iring)}   (^1/n = {_fmt(_iring_n(ind, ring))})")
+            if want_mci:
+                if ind.mci is not None:
+                    lines.append(f"    MCI      = {_fmt(ind.mci)}   (^1/n = {_fmt(_mci_n(ind, ring))})")
+                else:
+                    lines.append(f"    MCI      = N/A  (ring > 12 atoms)")
+            if want_pdi:
+                lines.append(f"    PDI      = {_fmt(ind.pdi) if ind.pdi is not None else 'N/A (not 6-membered)'}")
+            if want_flu:
+                lines.append(f"    FLU      = {_fmt(ind.flu)}")
+            if want_av1245:
+                lines.append(f"    {_av_text(ind, ring)}")
+            if want_boa:
+                lines.append(f"    BOA      = {_fmt(getattr(ind, 'boa', None))}   BOAc = {_fmt(getattr(ind, 'boa_c', None))}")
+
+    if summary_lines:
+        lines.append("")
+        lines.append("=" * 60)
+        lines.append("  Comparison between partitions")
+        lines.append("=" * 60)
+        lines.extend(summary_lines)
+
     lines.append("")
     lines.append("Output files")
     lines.append("-" * 30)
@@ -319,7 +336,7 @@ def _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
     lines.append("")
     lines.append("=" * 60)
 
-    fname = f"{name}_{partition}_results.txt"
+    fname = f"{name}_results.txt"
     with open(fname, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
     return fname
@@ -424,8 +441,8 @@ def _parse_partitions(raw):
     return partitions
 
 
-def _write_summary(name, done, rings, flags):
-    """Comparison of the requested indices between partitions (only when several were run)."""
+def _summary_table(done, rings, flags):
+    """Columns and rows with the requested indices of every ring for every partition."""
     want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa = flags
     cols = []
     if want_iring:  cols += ["Iring"]
@@ -434,8 +451,6 @@ def _write_summary(name, done, rings, flags):
     if want_flu:    cols += ["FLU"]
     if want_av1245: cols += ["AV1245", "AVmin"]
     if want_boa:    cols += ["BOA", "BOAc"]
-    if not cols:
-        return None
     rows = []
     for part, esi in done:
         for i, (r, ind) in enumerate(zip(rings, esi.indicators)):
@@ -448,13 +463,14 @@ def _write_summary(name, done, rings, flags):
             vals["BOA"]   = getattr(ind, "boa", None)
             vals["BOAc"]  = getattr(ind, "boa_c", None)
             rows.append((part, i + 1, "-".join(str(a) for a in r), *(_fmt(vals[c]) for c in cols)))
-    fname = f"{name}_partitions_summary.csv"
-    _write_csv(fname, "Partition,Ring,Atoms," + ",".join(cols), rows)
-    print(f"\n{'='*50}\n  Comparison between partitions\n{'='*50}")
-    print(f"  {'Partition':<12}{'Ring':<6}" + "".join(f"{c:>12}" for c in cols))
+    return cols, rows
+
+
+def _summary_lines(cols, rows):
+    lines = [f"  {'Partition':<12}{'Ring':<6}" + "".join(f"{c:>12}" for c in cols)]
     for row in rows:
-        print(f"  {row[0]:<12}{row[1]:<6}" + "".join(f"{v:>12}" for v in row[3:]))
-    return fname
+        lines.append(f"  {row[0]:<12}{row[1]:<6}" + "".join(f"{v:>12}" for v in row[3:]))
+    return lines
 
 
 def run(input_path=None):
@@ -564,25 +580,30 @@ def run(input_path=None):
         _print_results(esi, rings, want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
                        want_di=want_di, want_pop=want_pop, symbols=symbols)
 
-        files = _save_results(name, partition, rings, esi,
-                              want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
-                              want_di=want_di, want_pop=want_pop, symbols=symbols)
-
-        txt = _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
-                         want_iring, want_mci, want_pdi, want_flu, want_av1245, files, want_boa=want_boa,
-                         want_di=want_di, want_pop=want_pop, symbols=symbols)
-        files.append(txt)
-        all_files += files
+        all_files += _save_results(name, partition, rings, esi,
+                                   want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
+                                   want_di=want_di, want_pop=want_pop, symbols=symbols)
         done.append((partition, esi))
 
     if not done:
         raise SystemExit("ERROR: no partition could be computed.")
 
+    flags = (want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa)
+    summary_lines = None
     if len(done) > 1:
-        summary = _write_summary(name, done, rings,
-                                 (want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa))
-        if summary:
-            all_files.append(summary)
+        cols, rows = _summary_table(done, rings, flags)
+        if cols:
+            fname = f"{name}_partitions_summary.csv"
+            _write_csv(fname, "Partition,Ring,Atoms," + ",".join(cols), rows)
+            all_files.append(fname)
+            summary_lines = _summary_lines(cols, rows)
+            print(f"\n{'='*50}\n  Comparison between partitions\n{'='*50}")
+            print("\n".join(summary_lines))
+
+    txt = _write_txt(name, done, data, wf_file, xyz_file, rings,
+                     want_iring, want_mci, want_pdi, want_flu, want_av1245, all_files, want_boa=want_boa,
+                     want_di=want_di, want_pop=want_pop, symbols=symbols, summary_lines=summary_lines)
+    all_files.append(txt)
 
     print(f"\n[ok] Output files:")
     for f in all_files:

@@ -193,7 +193,7 @@ AV1245                YES
 The keyword `ALL` is a shortcut for `meta-lowdin nao iao lowdin mulliken`; `qtaim` is not included in it, because it needs the AIMAll files, so write it explicitly if you want it (it can be combined with the others, see below).
 
 - The PySCF calculation (or the reading of the wavefunction file) is done **only once** and shared by all the partitions, so each additional partition only costs the construction of its atomic overlap matrices and the indices.
-- The results of every partition are saved in their own files (`benzene_meta-lowdin_iring.csv`, `benzene_nao_iring.csv`, ...), exactly as if you had run each partition separately, and the screen shows one block per partition.
+- Each partition has its own `.csv` files (`benzene_meta-lowdin_iring.csv`, `benzene_nao_iring.csv`, ...), exactly as if you had run each partition separately. The results of all of them are collected in a single text file, `benzene_results.txt`, and the screen shows one block per partition.
 - When more than one partition is computed, the program also writes the file `<NAME_MOLECULE>_partitions_summary.csv` (and prints the same table on the screen) with the requested Iring, MCI, PDI, FLU, AV1245/AVmin and BOA/BOAc of every ring for every partition, so they can be compared at a glance.
 - If a partition fails, the program prints a warning, skips it and continues with the others. If a single partition was requested, the error stops the program as usual.
 - To combine `qtaim` with other partitions, give both the data of the other partitions (`MOLECULAR_COORDINATES`, `FUNCTIONAL` and `BASIS_SET`, or `WAVEFUNCTION_FILE`) and `ATOMICFILES_PATH`. The QTAIM values come from the AIMAll calculation and the rest from the wavefunction, so make sure that both were obtained for the same geometry and level of theory.
@@ -257,10 +257,10 @@ benzene_meta-lowdin_av1245.csv
 benzene_meta-lowdin_boa.csv
 benzene_meta-lowdin_di.csv
 benzene_meta-lowdin_populations.csv
-benzene_meta-lowdin_results.txt
+benzene_results.txt
 ```
 
-If several partitions are requested, the same set of files is written for each of them (with the name of the partition in the file name), plus `benzene_partitions_summary.csv`. Files are created only for the requested indices. The `.txt` file summarizes the setup (mode, partition, rings) and all indices for every ring. The screen output has the following format (one block per ring):
+The `.csv` files carry the name of the partition. If several partitions are requested, the same set of `.csv` files is written for each of them, plus `benzene_partitions_summary.csv`. The results of **all** the partitions are written in a **single** `.txt` file, `<NAME_MOLECULE>_results.txt`. Files are created only for the requested indices. The `.txt` file summarizes the setup (mode, partitions, rings), then gives a block with all the indices of every ring for each partition and, when there are several partitions, the comparison table between them. The screen output has the following format (one block per ring):
 
 ```
 Ring 1: [1-2-6-10-7-3]
