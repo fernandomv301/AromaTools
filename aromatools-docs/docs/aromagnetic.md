@@ -122,6 +122,37 @@ VTK_FILES         YES              # YES or NO
 END_GRID
 ```
 
+### Choosing the number of points: the voxel size
+
+The quality of the maps of $B^{ind}_{z}$ and NICS depends on the separation between the points of the grid, called the **voxel coordinate** or step. A good value is between **0.2 and 0.3 Å** along each Cartesian axis. A larger step gives coarse maps and isolines; a smaller one gives smoother maps but needs many more ghost atoms, and therefore more calculations.
+
+The step along each axis is
+
+$$
+V_x = \frac{l_x}{N_x - 1}, \qquad V_y = \frac{l_y}{N_y - 1}, \qquad V_z = \frac{l_z}{N_z - 1}
+$$
+
+where $V$ is the separation between points, $N$ is the number of points (`NUM_POINTS`) and $l$ is the length of the grid along that Cartesian axis.
+
+You do not need to calculate it by hand: when the grid is generated (`amg run`), the program prints the steps on the screen (the numbers below are only an example),
+
+```text
+Calc grid         : N=(19,19,19)  step(Å)=(0.421053,0.421053,0.421053)  points=6859
+```
+
+and saves them in the file `grid_info.txt`, in the lines `SHAPE(N)` (the numbers of points), `STEP(angstroms)` (the voxel coordinates $V_x\ V_y\ V_z$) and `AXIS_LENGTHS(angstroms)` (the lengths $l_x\ l_y\ l_z$).
+
+If a step is outside the 0.2–0.3 Å range, change `NUM_POINTS` in the `BEGIN_GRID` block and generate the grid again. For a desired step $V$, the number of points is
+
+$$
+N = \frac{l}{V} + 1
+$$
+
+For example, for an axis of length $l = 8.0$ Å, 19 points give a step of 0.44 Å, which is too large, while 33 points give 0.25 Å.
+
+!!! note
+    The lengths $l$ in `grid_info.txt` are those of the region that is actually calculated. If the molecule has mirror planes, the program calculates only part of the box and completes the rest by symmetry, so $l$ and $N$ refer to the calculated part. The step is the same in the complete grid.
+
 ### Isolines and isosurfaces of the induced magnetic field
 
 The induced magnetic field ($B^{ind}_{z}$) calculated on the grid can be displayed in two complementary ways:
