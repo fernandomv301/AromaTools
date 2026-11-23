@@ -140,7 +140,7 @@ Everything after `#` on a line is ignored. Keywords are case-insensitive.
 | `CHARGE` | Total charge | `0` |
 | `MULTIPLICITY` | Spin multiplicity. `1` runs a restricted calculation (RKS); any other value runs an unrestricted one (UKS) | `1` |
 | `WAVEFUNCTION_FILE` | Wavefunction file (file mode), see [Wavefunction files](#wavefunction-files) | none |
-| `PARTITION` | Atomic partition (see below) | `meta-lowdin` |
+| `PARTITION` | Atomic partition (see below). Several partitions can be written in the same line, or `ALL`, see [Several partitions at once](#several-partitions-at-once) | `meta-lowdin` |
 | `ATOMICFILES_PATH` | Folder with the AIMAll `.int` files (only with `PARTITION qtaim`), see [QTAIM](#qtaim) | none |
 | `RING` | Atom numbers of **one** ring (or of any path of atoms that you want to study), **in the order to follow**, starting at 1 | all rings are detected |
 | `IRING`, `MCI`, `PDI`, `FLU`, `AV1245`, `BOA`, `DI`, `POPULATIONS` | `YES` to compute the index (`AV1245` also gives AV<sub>min</sub>, and `BOA` also gives BOAc). `DI` gives the delocalization indices of the ring bonds and `POPULATIONS` the atomic populations of the ring atoms | `NO` |
@@ -169,6 +169,34 @@ The file must contain the molecular orbitals and the basis set. A closed-shell w
 | `qtaim` | Real-space partition of the Quantum Theory of Atoms in Molecules, read from AIMAll files (see [QTAIM](#qtaim)) |
 
 The first three partitions (`meta-lowdin`, `nao`, `iao`) are recommended because the resulting indices are largely independent of the basis set. The Mulliken and Löwdin partitions are strongly basis-set dependent and are included mainly for comparison.
+
+### Several partitions at once
+
+Because the value of every index depends on the partition, it is good practice to check that your conclusions do not change from one partition to another. You do not need one `INPUT.txt` for each partition: write all of them in the `PARTITION` line, separated by spaces or commas.
+
+```text
+NAME_MOLECULE         benzene
+MOLECULAR_COORDINATES benzene.xyz
+FUNCTIONAL            B3LYP
+BASIS_SET             aug-cc-pVDZ
+CHARGE                0
+MULTIPLICITY          1
+
+PARTITION             meta-lowdin nao iao      # or: meta-lowdin, nao, iao
+RING                  1 2 6 10 7 3
+
+IRING                 YES
+MCI                   YES
+AV1245                YES
+```
+
+The keyword `ALL` is a shortcut for `meta-lowdin nao iao lowdin mulliken`; `qtaim` is not included in it, because it needs the AIMAll files, so write it explicitly if you want it (it can be combined with the others, see below).
+
+- The PySCF calculation (or the reading of the wavefunction file) is done **only once** and shared by all the partitions, so each additional partition only costs the construction of its atomic overlap matrices and the indices.
+- The results of every partition are saved in their own files (`benzene_meta-lowdin_iring.csv`, `benzene_nao_iring.csv`, ...), exactly as if you had run each partition separately, and the screen shows one block per partition.
+- When more than one partition is computed, the program also writes the file `<NAME_MOLECULE>_partitions_summary.csv` (and prints the same table on the screen) with the requested Iring, MCI, PDI, FLU, AV1245/AVmin and BOA/BOAc of every ring for every partition, so they can be compared at a glance.
+- If a partition fails, the program prints a warning, skips it and continues with the others. If a single partition was requested, the error stops the program as usual.
+- To combine `qtaim` with other partitions, give both the data of the other partitions (`MOLECULAR_COORDINATES`, `FUNCTIONAL` and `BASIS_SET`, or `WAVEFUNCTION_FILE`) and `ATOMICFILES_PATH`. The QTAIM values come from the AIMAll calculation and the rest from the wavefunction, so make sure that both were obtained for the same geometry and level of theory.
 
 ### QTAIM
 
@@ -232,7 +260,7 @@ benzene_meta-lowdin_populations.csv
 benzene_meta-lowdin_results.txt
 ```
 
-Files are created only for the requested indices. The `.txt` file summarizes the setup (mode, partition, rings) and all indices for every ring. The screen output has the following format (one block per ring):
+If several partitions are requested, the same set of files is written for each of them (with the name of the partition in the file name), plus `benzene_partitions_summary.csv`. Files are created only for the requested indices. The `.txt` file summarizes the setup (mode, partition, rings) and all indices for every ring. The screen output has the following format (one block per ring):
 
 ```
 Ring 1: [1-2-6-10-7-3]

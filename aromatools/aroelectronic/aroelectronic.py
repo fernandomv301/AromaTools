@@ -15,6 +15,8 @@ _BOHR_TO_ANG = 0.529177210903
 _COV_TOL     = 1.3
 
 SUPPORTED_PARTITIONS = {"meta-lowdin", "nao", "iao", "mulliken", "lowdin", "qtaim"}
+# "ALL" expands to these; qtaim is not included because it needs the AIMAll files (ATOMICFILES_PATH).
+_ALL_PARTITIONS = ["meta-lowdin", "nao", "iao", "lowdin", "mulliken"]
 
 BANNER = r"""
 ======================================================================
@@ -406,6 +408,55 @@ def _find_input(path=None):
     return "INPUT.txt"
 
 
+def _parse_partitions(raw):
+    """PARTITION may list several partitions (separated by spaces or commas) or ALL."""
+    tokens = [t for t in raw.replace(",", " ").lower().split() if t] or ["meta-lowdin"]
+    partitions = []
+    for t in tokens:
+        for p in (_ALL_PARTITIONS if t == "all" else [t]):
+            if p not in SUPPORTED_PARTITIONS:
+                raise SystemExit(
+                    f"ERROR: PARTITION '{p}' not supported.\n"
+                    f"Options: {', '.join(sorted(SUPPORTED_PARTITIONS))}, all"
+                )
+            if p not in partitions:
+                partitions.append(p)
+    return partitions
+
+
+def _write_summary(name, done, rings, flags):
+    """Comparison of the requested indices between partitions (only when several were run)."""
+    want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa = flags
+    cols = []
+    if want_iring:  cols += ["Iring"]
+    if want_mci:    cols += ["MCI"]
+    if want_pdi:    cols += ["PDI"]
+    if want_flu:    cols += ["FLU"]
+    if want_av1245: cols += ["AV1245", "AVmin"]
+    if want_boa:    cols += ["BOA", "BOAc"]
+    if not cols:
+        return None
+    rows = []
+    for part, esi in done:
+        for i, (r, ind) in enumerate(zip(rings, esi.indicators)):
+            vals = {}
+            vals["Iring"] = getattr(ind, "iring", None)
+            vals["MCI"]   = getattr(ind, "mci", None)
+            vals["PDI"]   = getattr(ind, "pdi", None)
+            vals["FLU"]   = getattr(ind, "flu", None)
+            vals["AV1245"], vals["AVmin"] = _av_values(ind, r)
+            vals["BOA"]   = getattr(ind, "boa", None)
+            vals["BOAc"]  = getattr(ind, "boa_c", None)
+            rows.append((part, i + 1, "-".join(str(a) for a in r), *(_fmt(vals[c]) for c in cols)))
+    fname = f"{name}_partitions_summary.csv"
+    _write_csv(fname, "Partition,Ring,Atoms," + ",".join(cols), rows)
+    print(f"\n{'='*50}\n  Comparison between partitions\n{'='*50}")
+    print(f"  {'Partition':<12}{'Ring':<6}" + "".join(f"{c:>12}" for c in cols))
+    for row in rows:
+        print(f"  {row[0]:<12}{row[1]:<6}" + "".join(f"{v:>12}" for v in row[3:]))
+    return fname
+
+
 def run(input_path=None):
     print(BANNER)
 
@@ -416,16 +467,10 @@ def run(input_path=None):
     data = _read_input(input_path)
 
     name      = data.get("NAME_MOLECULE", "molecule")
-    partition = data.get("PARTITION", "meta-lowdin").strip().lower()
+    partitions = _parse_partitions(data.get("PARTITION", "meta-lowdin"))
     wf_file   = data.get("WAVEFUNCTION_FILE", "").strip()
     xyz_file  = data.get("MOLECULAR_COORDINATES", "").strip()
     qtaim_path = data.get("ATOMICFILES_PATH", "").strip()
-
-    if partition not in SUPPORTED_PARTITIONS:
-        raise SystemExit(
-            f"ERROR: PARTITION '{partition}' not supported.\n"
-            f"Options: {', '.join(sorted(SUPPORTED_PARTITIONS))}"
-        )
 
     want_iring  = _truthy(data.get("IRING",  "NO"))
     want_mci    = _truthy(data.get("MCI",    "NO"))
@@ -441,31 +486,38 @@ def run(input_path=None):
             "ERROR: No index requested. Set at least one of IRING, MCI, PDI, FLU, AV1245, BOA, DI, POPULATIONS to YES."
         )
 
-    if partition == "qtaim":
+    use_qtaim = "qtaim" in partitions
+    others    = [p for p in partitions if p != "qtaim"]
+    mol = mf = aom = molinfo = None
+    symbols = coords = None
+
+    if use_qtaim:
         if not os.path.isdir(qtaim_path):
             raise SystemExit("ERROR: PARTITION qtaim needs ATOMICFILES_PATH, the folder with the AIMAll .int files.")
         print(f"[info] Reading QTAIM atomic files: {qtaim_path}")
         aom, molinfo = _read_qtaim(qtaim_path)
         symbols = list(molinfo["symbols"])
         coords  = None if molinfo.get("geom") is None else (molinfo["geom"] * _BOHR_TO_ANG).tolist()
-    elif wf_file:
-        if not os.path.isfile(wf_file):
-            raise SystemExit(f"ERROR: WAVEFUNCTION_FILE not found: {wf_file}")
-        print(f"[info] Reading wavefunction: {wf_file}")
-        mol, mf = _parse_wavefunction(wf_file)
-        symbols = list(mol.atomic_symbols)
-        coords  = (mol.atom_coords() * _BOHR_TO_ANG).tolist()
-    else:
-        for key in ("MOLECULAR_COORDINATES", "FUNCTIONAL", "BASIS_SET"):
-            if not data.get(key, "").strip():
-                raise SystemExit(f"ERROR: {key} is required when WAVEFUNCTION_FILE is not provided.")
-        if not os.path.isfile(xyz_file):
-            raise SystemExit(f"ERROR: MOLECULAR_COORDINATES not found: {xyz_file}")
-        charge = int(data.get("CHARGE", 0))
-        mult   = int(data.get("MULTIPLICITY", 1))
-        print(f"[info] Running PySCF: {data['FUNCTIONAL']}/{data['BASIS_SET']}")
-        symbols, coords = _read_xyz(xyz_file)
-        mol, mf = _run_pyscf(symbols, coords, data["FUNCTIONAL"], data["BASIS_SET"], charge, mult)
+
+    if others:    # the wavefunction is obtained only once and shared by all the partitions
+        if wf_file:
+            if not os.path.isfile(wf_file):
+                raise SystemExit(f"ERROR: WAVEFUNCTION_FILE not found: {wf_file}")
+            print(f"[info] Reading wavefunction: {wf_file}")
+            mol, mf = _parse_wavefunction(wf_file)
+            symbols = list(mol.atomic_symbols)
+            coords  = (mol.atom_coords() * _BOHR_TO_ANG).tolist()
+        else:
+            for key in ("MOLECULAR_COORDINATES", "FUNCTIONAL", "BASIS_SET"):
+                if not data.get(key, "").strip():
+                    raise SystemExit(f"ERROR: {key} is required when WAVEFUNCTION_FILE is not provided.")
+            if not os.path.isfile(xyz_file):
+                raise SystemExit(f"ERROR: MOLECULAR_COORDINATES not found: {xyz_file}")
+            charge = int(data.get("CHARGE", 0))
+            mult   = int(data.get("MULTIPLICITY", 1))
+            print(f"[info] Running PySCF: {data['FUNCTIONAL']}/{data['BASIS_SET']}")
+            symbols, coords = _read_xyz(xyz_file)
+            mol, mf = _run_pyscf(symbols, coords, data["FUNCTIONAL"], data["BASIS_SET"], charge, mult)
 
     ring_raw = data.get("RING", "").strip()
     if ring_raw:
@@ -485,36 +537,58 @@ def run(input_path=None):
             )
         print(f"[info] Auto-detected {len(rings)} ring(s)")
 
-    print(f"[info] Partition: {partition}")
+    print(f"[info] Partition{'s' if len(partitions) > 1 else ''}: {', '.join(partitions)}")
     print(f"[info] Indices  : "
           + "  ".join(k for k, v in [("Iring", want_iring), ("MCI", want_mci),
                                       ("PDI", want_pdi), ("FLU", want_flu),
                                       ("AV1245", want_av1245), ("BOA", want_boa),
                                       ("DI", want_di), ("POPULATIONS", want_pop)] if v))
 
-    if partition == "qtaim":
-        esi = _run_esi_qtaim(aom, rings, molinfo)
-    else:
-        esi = _run_esi(mol, mf, rings, partition)
+    done, failed, all_files = [], [], []
+    for partition in partitions:
+        try:
+            if partition == "qtaim":
+                esi = _run_esi_qtaim(aom, rings, molinfo)
+            else:
+                esi = _run_esi(mol, mf, rings, partition)
+        except Exception as e:
+            if len(partitions) == 1:
+                raise
+            print(f"\n[WARNING] Partition '{partition}' failed and was skipped: {e}")
+            failed.append(partition)
+            continue
 
-    print(f"\n{'='*50}")
-    print(f"  {name}  |  partition: {partition}")
-    print("="*50)
-    _print_results(esi, rings, want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
-                   want_di=want_di, want_pop=want_pop, symbols=symbols)
+        print(f"\n{'='*50}")
+        print(f"  {name}  |  partition: {partition}")
+        print("="*50)
+        _print_results(esi, rings, want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
+                       want_di=want_di, want_pop=want_pop, symbols=symbols)
 
-    files = _save_results(name, partition, rings, esi,
-                          want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
-                          want_di=want_di, want_pop=want_pop, symbols=symbols)
+        files = _save_results(name, partition, rings, esi,
+                              want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
+                              want_di=want_di, want_pop=want_pop, symbols=symbols)
 
-    txt = _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
-                     want_iring, want_mci, want_pdi, want_flu, want_av1245, files, want_boa=want_boa,
-                     want_di=want_di, want_pop=want_pop, symbols=symbols)
-    files.append(txt)
+        txt = _write_txt(name, partition, data, wf_file, xyz_file, rings, esi,
+                         want_iring, want_mci, want_pdi, want_flu, want_av1245, files, want_boa=want_boa,
+                         want_di=want_di, want_pop=want_pop, symbols=symbols)
+        files.append(txt)
+        all_files += files
+        done.append((partition, esi))
+
+    if not done:
+        raise SystemExit("ERROR: no partition could be computed.")
+
+    if len(done) > 1:
+        summary = _write_summary(name, done, rings,
+                                 (want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa))
+        if summary:
+            all_files.append(summary)
 
     print(f"\n[ok] Output files:")
-    for f in files:
+    for f in all_files:
         print(f"  {f}")
+    if failed:
+        print(f"\n[WARNING] Partitions not computed: {', '.join(failed)}")
 
 
 # ──────────────────────────────────────────────
