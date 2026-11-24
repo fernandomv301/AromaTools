@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import re
+
 def iter_atoms(ase_atoms):
     for sym, (x, y, z) in zip(ase_atoms.get_chemical_symbols(), ase_atoms.get_positions()):
         yield sym, float(x), float(y), float(z)
@@ -10,6 +12,17 @@ def chunks(seq, n):
         yield seq[i:i+n]
 
 # ---------------- Gaussian ----------------
+
+# Keylist appended after the molecule specification when POP=NBO6read (or NBOread, NBO7read)
+# is requested: it prints the contribution of every canonical MO to the shielding tensor,
+# which is what 'amg mo' reads.
+NBO_KEYLIST = "$NBO NCS=0.0 XYZ MO $END"
+_RE_NBO_READ = re.compile(r"\bnbo\d*read\b", re.IGNORECASE)
+
+
+def _needs_nbo_keylist(keyword_line):
+    return bool(_RE_NBO_READ.search(keyword_line or ""))
+
 
 def write_g16(fname, ase_atoms, bq_pts, cfg):
     mem = cfg.get("memory", 16)
@@ -32,6 +45,9 @@ def write_g16(fname, ase_atoms, bq_pts, cfg):
             x, y, z = bq[-3], bq[-2], bq[-1]
             f.write(f"Bq  {x:14.8f} {y:14.8f} {z:14.8f}\n")
         f.write("\n")
+        if _needs_nbo_keylist(kline):
+            # NBO keylist, followed by the blank line that Gaussian needs at the end of the input
+            f.write(NBO_KEYLIST + "\n\n")
 
 # ---------------- ORCA ----------------
 

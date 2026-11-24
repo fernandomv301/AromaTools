@@ -15,13 +15,8 @@ from pathlib import Path
 from . import parser_mo
 from .amg_read_input import read_input
 from .get_cube import *
-from .get_nics_scan import (
-    _parse_heights,
-    best_fit_plane_axes,
-    compute_half_range,
-    build_scan_positions
-)
-from .get_integral import romberg
+from .tools import _parse_heights
+from .get_results import romberg
 
 # ======================================== For MO ========================================
 
@@ -346,6 +341,16 @@ def run_mo_profile(cfg, name, spec, others_labels, labels):
     print("Done! MO profile CSV/plots generated!")
 
 def run_mo_nics_scan(cfg, name, spec, others_labels, labels):
+    try:
+        from .get_nics_scan import (
+            best_fit_plane_axes,
+            build_scan_positions,
+        )
+    except ImportError:
+        raise SystemExit(
+            "ERROR: the MO decomposition of the NICS-XY-scan is not available in this "
+            "version of AromaTools. Use the GRID module for the MO decomposition."
+        )
     scan = cfg.get("NICS_SCAN_XY", {})
     general = cfg.get("general", {})
     xyz_file = _get_general_value(general, "MOLECULAR_COORDINATES")
