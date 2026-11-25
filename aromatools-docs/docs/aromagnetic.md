@@ -415,6 +415,16 @@ For each path and height it writes a `.csv` file (distance along the path and NI
 amg get --interactive
 ```
 
+The `.html` files are:
+
+| File | Content |
+|------|---------|
+| `<NAME_MOLECULE>_prediXY_h1p00.html` | NICS along the path for one height (one file for each height; `h1p00` means 1.00 Å) |
+| `<NAME_MOLECULE>_prediXY_3D.html` | 3D plot of the NICS over the structure of the molecule |
+| `<NAME_MOLECULE>_prediXY_overlay_h1p00.html` | Only with several paths: the NICS of all the paths superimposed, for one height |
+
+If there are several paths, the files of each one carry `_p00`, `_p01`, ... in the name (for example, `<NAME_MOLECULE>_prediXY_p00_h1p00.html` and `<NAME_MOLECULE>_p00_prediXY_3D.html`). Without `--interactive` the same plots are saved only as `.png` images.
+
 !!! note
     The vertical profiles, the NICS-XY-scan and Predi-XY are defined in the same `INPUT.txt` and can be calculated at the same time, but `BEGIN_GRID` cannot be combined with any of them.
 
