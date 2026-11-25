@@ -64,12 +64,29 @@ The program prompts for the following information:
 ```
 Output file (Gaussian or ORCA): benzene.log
 Index type [HOMA/HOMER]: HOMA
+Would you like to insert the ring sequence? [yes/no]: no
 ```
 
 | Input | Description |
 |-------|-------------|
 | Output file | Path to your Gaussian (`.log`), ORCA (`.out`), or XYZ (`.xyz`) file |
 | Index type | `HOMA` for the ground state (S₀) or `HOMER` for the lowest triplet state (T₁) |
+| Ring sequence | `no` to detect all the rings automatically, or `yes` to give a ring yourself (see [Choosing the ring manually](#choosing-the-ring-manually)) |
+
+### Choosing the ring manually
+
+By default, AroGeometric detects all the rings of up to 8 atoms. If you answer `yes` to *Would you like to insert the ring sequence?*, the program asks for the ring on the next line and computes the indices **only for that ring**:
+
+```
+Would you like to insert the ring sequence? [yes/no]: yes
+Ring sequence (atom numbers in order, separated by spaces): 1 2 6 10 7 3
+```
+
+- The atoms are numbered as in the file, starting at **1**, with the hydrogens included in the count (so the numbers are the ones you see in the Gaussian/ORCA output or in the `.xyz` file, which in ORCA are one more than its own labels, because ORCA starts at 0).
+- Write the atoms **in the order in which they are bonded around the ring**. The closing bond (last atom to first) is added automatically. Spaces or commas can separate the numbers, and the direction and the starting atom do not matter.
+- The ring needs at least 3 atoms, without repeated atoms and without hydrogens. If something is wrong, the program explains the problem and asks again.
+- If two consecutive atoms are not bonded, the program shows a warning (usually the order is wrong), but the calculation continues with the distances between them.
+- This option is useful for large systems, for a specific ring of a fused system, or for rings of more than 8 atoms, which are not detected automatically.
 
 ### Results
 

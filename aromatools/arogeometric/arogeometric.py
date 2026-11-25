@@ -125,8 +125,39 @@ def order_ring_nodes(G, ring):
     return ordered
 
 
-def compute_index(G, atoms, index_type):
-    rings = find_rings(G)
+def parse_manual_ring(text, elements, G, atom_to_node):
+    """Ring typed by the user: atom numbers (1 = first atom of the file, hydrogens included), in the
+    order of the ring, separated by spaces or commas. Returns the ring as nodes of the graph G, which
+    has no hydrogens. Raises ValueError with a message for the user if the ring is not valid."""
+    try:
+        numbers = [int(t) for t in text.replace(",", " ").split()]
+    except ValueError:
+        raise ValueError("The ring must be a list of atom numbers separated by spaces, for example: 1 2 3 4 5 6")
+    if len(numbers) < 3:
+        raise ValueError("A ring needs at least 3 atoms.")
+    if len(set(numbers)) != len(numbers):
+        raise ValueError("An atom appears more than once in the ring.")
+    nodes = []
+    for n in numbers:
+        if n < 1 or n > len(elements):
+            raise ValueError(f"Atom {n} does not exist (the file has {len(elements)} atoms).")
+        if n not in atom_to_node:
+            raise ValueError(f"Atom {n} is a hydrogen; hydrogens are not part of the rings.")
+        nodes.append(atom_to_node[n])
+    for k in range(len(nodes)):
+        a, b = nodes[k], nodes[(k + 1) % len(nodes)]
+        if not G.has_edge(a, b):
+            na, nb = numbers[k], numbers[(k + 1) % len(numbers)]
+            print(f"[!] Atoms {na} ({elements[na - 1]}) and {nb} ({elements[nb - 1]}) are not bonded; "
+                  f"check the order of the ring.")
+    return nodes
+
+
+def compute_index(G, atoms, index_type, rings=None):
+    # rings: rings given by the user, already ordered (nodes of G); if None they are detected.
+    manual = rings is not None
+    if not manual:
+        rings = find_rings(G)
     ring_data = []
     bond_rows = []
     coords = {i: (x, y, z) for i, (_, x, y, z) in enumerate(atoms)}
@@ -140,7 +171,7 @@ def compute_index(G, atoms, index_type):
         raise ValueError("Invalid index_type. Choose 'HOMA' or 'HOMER'.")
 
     for idx, ring in enumerate(rings, start=1):
-        ordered_ring = order_ring_nodes(G, ring)
+        ordered_ring = list(ring) if manual else order_ring_nodes(G, ring)
         ring_atoms = ordered_ring + [ordered_ring[0]]
         distances = []
         bond_info = []
@@ -334,15 +365,43 @@ def main():
     fileout = input("Output file (Gaussian or ORCA): ").strip()
     index_type = input("Index type [HOMA/HOMER]: ").strip().upper()
 
+    while True:
+        answer = input("Would you like to insert the ring sequence? [yes/no]: ").strip().lower()
+        if answer in ("yes", "y", "si", "sí"):
+            manual_ring = True
+            break
+        if answer in ("no", "n", ""):
+            manual_ring = False
+            break
+        print("Please answer yes or no.")
+    ring_text = input("Ring sequence (atom numbers in order, separated by spaces): ") if manual_ring else None
+
     df_atoms = extract_atoms_from_output(fileout)
+    elements = list(df_atoms["Element"])
     atoms_list = [
         (row.Element, row.X, row.Y, row.Z)
         for row in df_atoms.itertuples(index=False)
         if row.Element != 'H'
     ]
+    # atom number of the file (starting at 1) -> node of the graph, which has no hydrogens
+    atom_to_node = {}
+    for number, element in enumerate(elements, start=1):
+        if element != 'H':
+            atom_to_node[number] = len(atom_to_node)
 
     G = build_graph(atoms_list)
-    rings, ring_indices, df_main, df_bonds = compute_index(G, atoms_list, index_type)
+
+    manual_rings = None
+    if manual_ring:
+        while True:
+            try:
+                manual_rings = [parse_manual_ring(ring_text, elements, G, atom_to_node)]
+                break
+            except ValueError as e:
+                print(f"ERROR: {e}")
+                ring_text = input("Ring sequence (atom numbers in order, separated by spaces): ")
+
+    rings, ring_indices, df_main, df_bonds = compute_index(G, atoms_list, index_type, rings=manual_rings)
 
     if index_type == "HOMA":
         cols = [c for c in ["Ring", "HOMA93", "HOMAC", "BLA"] if c in df_main.columns]
