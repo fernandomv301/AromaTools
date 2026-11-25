@@ -22,6 +22,11 @@ MULTIPLICITY              1
 MOLECULAR_COORDINATES     mol.xyz
 PSEUDO_PI                 NO                        # YES or NO
 
+# Keep ONLY the blocks you need (delete the others):
+#   BEGIN_GRID                 -> grid (cannot be combined with VP or HP)
+#   BEGIN_VP                   -> vertical profiles (INICS and ring current strength)
+#   BEGIN_HP                   -> NICS_SCAN_XY and/or PREDI_XY (can be combined with VP)
+
 # --------------------------------
 #      GRID (Grid generation)
 # --------------------------------
@@ -48,11 +53,6 @@ DELTA_Z     0.1
 NUM_GA      100
 # END       5.0                                     # Only for Logarithmic scale
 
-# ================= OPTIONS =================
-RCS         YES                                     # YES or NO
-INICS       YES                                     # YES or NO
-NICS_SCAN   YES                                     # YES or NO (with z-profile)
-
 END_VP
 
 # --------------------------------
@@ -66,11 +66,10 @@ MARGIN           2.0
 HEIGHT           0.0 1.0 1.7
 DELTA_X          0.25
 MAKE_AXIS_Y      YES                                # YES or NO Just for NICS_SCAN_XY
-DIRECTION        FORWARD                            # FORWARD or BACKWARD Just for PREDI_XY
 
-# ================= OPTIONS =================
 NICS_SCAN_XY     YES                                # YES or NO
 PREDI_XY         YES                                # YES or NO
+PREDI_XY_PATH    AUTO                               # AUTO, or ring numbers in order (see: amg rings)
 
 END_HP
 

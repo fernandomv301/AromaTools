@@ -15,6 +15,8 @@ AroMagnetic implements the following magnetic descriptors:
 - $B^{ind}_{z}$ (induced magnetic field)
 - NICS-SP
 - NICS-scan
+- NICS-XY-scan
+- Predi-XY (NICS-XY-scans through the rings)
 - NICS-2D
 - NICS-3D
 - INICS (integral NICS)
@@ -122,6 +124,8 @@ VTK_FILES         YES              # YES or NO
 END_GRID
 ```
 
+The three lines of the module switchboard (`GRID_MODULE`, `PROFILE_MODULE`, `NICS_SCAN_XY_MODULE`) are read only by the command `amg mo`, which needs `GRID_MODULE ON`. `amg run` and `amg get` detect what to do from the block that is present in the file (`BEGIN_GRID`, `BEGIN_VP` or `BEGIN_HP`).
+
 ### Choosing the number of points: the voxel size
 
 The quality of the maps of $B^{ind}_{z}$ and NICS depends on the separation between the points of the grid, called the **voxel coordinate** or step. A good value is between **0.2 and 0.3 Å** along each Cartesian axis. A larger step gives coarse maps and isolines; a smaller one gives smoother maps but needs many more ghost atoms, and therefore more calculations.
@@ -180,8 +184,13 @@ The induced magnetic field ($B^{ind}_{z}$) calculated on the grid can be display
      For each system, write its name and, if it applies, a note such as "unpublished results". -->
 
 
-## Profile module
+## Vertical profiles: INICS and ring current strength
+
+A vertical profile places a line of ghost atoms **normal to each ring**, starting at its center, and computes $B^{ind}_{z}$ and NICS along it. From these profiles AroMagnetic obtains the INICS and the ring current strength. The ring detection is automatic, so one profile (and one set of input files) is created for each ring of the molecule.
+
 ### Input format
+
+The profile is defined in the `BEGIN_VP` ... `END_VP` block:
 
 ```text
 # ================================
@@ -196,7 +205,7 @@ NAME_MOLECULE             mol
 PROGRAM                   Gaussian            # ORCA or GAUSSIAN
 KEYWORD_LINE              Functional/Basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC
 
-PROCS                     16 # If you use ORCA, this value doesn't appear in the input files
+PROCS                     16 # Only used for Gaussian; for ORCA, set the number of processors in BEGIN_ORCA_BLOCK
 MEMORY_GB                 32
 
 CHARGE                    0
@@ -205,42 +214,117 @@ MULTIPLICITY              1
 MOLECULAR_COORDINATES     mol.xyz
 PSEUDO_PI                 NO              # YES or NO
 
-
 # --------------------------------
-# Module Switchboard
+# Vertical profile (normal to each ring)
 # --------------------------------
-# Turn ON only what you need.
-
-GRID_MODULE                OFF
-PROFILE_MODULE             ON
-NICS_SCAN_XY_MODULE        OFF
-
-# --------------------------------
-# Profile (1D normal to ring)
-# --------------------------------
-# Required if PROFILE_MODULE = ON
-#
 # Linear scale requires:
 #   START, DELTA_Z, NUM_GA
 #
 # Logarithmic scale requires:
 #   START, END, NUM_GA
 
-BEGIN_PROFILE
+BEGIN_VP
 
 SCALE       Linear               # Linear or Logarithmic
 
-START       0.0
-DELTA_Z     0.1
-NUM_GA      100
+START       0.0                  # Å
+DELTA_Z     0.1                  # Å
+NUM_GA      100                  # Number of ghost atoms per ring
 
 # Only for Logarithmic scale:
-# END      5.0
+# END       5.0
 
-END_PROFILE
+# BOND_TOL  0.4                  # Optional: tolerance (Å) of the ring detection
+
+END_VP
 ```
 
-## NICS-scan module
+| Keyword | Description | Default |
+|---------|-------------|---------|
+| `SCALE` | `Linear` (equally spaced points) or `Logarithmic` | `Linear` |
+| `START` | Distance of the first point to the ring center (Å) | `0.0` (`0.1` if Logarithmic) |
+| `DELTA_Z` | Step between points (Å). Linear scale only | `0.1` |
+| `END` | Distance of the last point (Å). Logarithmic scale only | `5.0` |
+| `NUM_GA` | Number of ghost atoms of each profile | `100` |
+| `BOND_TOL` | Tolerance (Å) added to the sum of the covalent radii to decide whether two atoms are bonded when the rings are detected | `0.4` |
+
+`BEGIN_VP` cannot be combined with `BEGIN_GRID` in the same file (use a separate `INPUT.txt` for the grid), but it can be combined with `BEGIN_HP` (see below).
+
+### Results
+
+`amg run` creates the input files `<NAME_MOLECULE>_ring0000`, `<NAME_MOLECULE>_ring0001`, ... (one for each ring) and the file `<NAME_MOLECULE>_vprofiles.xyz` with the molecule and the ghost atoms. After running them, `amg get` writes, for each ring:
+
+- a `.csv` file (`<NAME_MOLECULE>_ring0000.csv`) with the distance to the ring center, $B^{ind}_{z}$ and NICS, in ppm;
+- plots of $B^{ind}_{z}$ and NICS as a function of the distance (`.png`).
+
+It also writes `int_out.txt`, which collects for each ring the integral of $B^{ind}_{z}$ and the **ring current strength** (nA/T) obtained from it with the Ampère–Maxwell law, and the integral of NICS (**INICS**). The integrals are computed with the Romberg method on the profile, so use a step small enough (`DELTA_Z` of 0.1 Å or less) and a profile long enough for the field to decay.
+
+## NICS-XY-scan: horizontal profiles along the Cartesian axes
+
+The NICS-XY-scan places a line of ghost atoms parallel to the X axis (and, optionally, to the Y axis) of the molecule, at one or more heights above the molecular plane. The molecule is oriented automatically, and the lines pass through its geometric center. The profile shows where the induced current of the different rings of the system produces shielding and deshielding.
+
+### Input format
+
+The scan is defined in the `BEGIN_HP` ... `END_HP` block, with `NICS_SCAN_XY YES`:
+
+```text
+# ================================
+#        AroMagnetic INPUT
+# ================================
+
+# --------------------------------
+# General Information
+# --------------------------------
+
+NAME_MOLECULE             mol
+PROGRAM                   Gaussian            # ORCA or GAUSSIAN
+KEYWORD_LINE              Functional/Basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC
+
+PROCS                     16 # Only used for Gaussian; for ORCA, set the number of processors in BEGIN_ORCA_BLOCK
+MEMORY_GB                 32
+
+CHARGE                    0
+MULTIPLICITY              1
+
+MOLECULAR_COORDINATES     mol.xyz
+PSEUDO_PI                 NO              # YES or NO
+
+# --------------------------------
+# Horizontal profiles
+# --------------------------------
+
+BEGIN_HP
+
+NICS_SCAN_XY    YES
+
+POINTS          81              # Number of ghost atoms per line
+MARGIN          2.0             # Å beyond the outermost atom
+HEIGHT          0.0 1.0 1.7     # Heights above the molecular plane (Å)
+DELTA_X         0.1             # Step (Å)
+MAKE_AXIS_Y     YES             # YES: also scan along the Y axis
+
+END_HP
+```
+
+| Keyword | Description | Default |
+|---------|-------------|---------|
+| `NICS_SCAN_XY` | `YES` to build the NICS-XY-scan | `NO` |
+| `POINTS` | Number of ghost atoms per line | `81` |
+| `MARGIN` | Distance (Å) that the line extends beyond the outermost atom of the molecule | `2.0` |
+| `HEIGHT` | One or more heights (Å) above the molecular plane. One scan is made for each | `1.0` |
+| `DELTA_X` | Step between points (Å) | `0.25` |
+| `MAKE_AXIS_Y` | `YES` to scan also along the Y axis | `NO` |
+
+The range of the line is the larger of the one needed to cover the molecule plus `MARGIN` and the one given by `POINTS` and `DELTA_X`. If `POINTS` and `DELTA_X` do not cover the molecule, the range is enlarged and the step is adjusted; the program prints the step that was finally used.
+
+### Results
+
+`amg run` creates one input for each axis and height (`<NAME_MOLECULE>_hpX_h1p00`, `<NAME_MOLECULE>_hpY_h1p00`, ...) and the file `<NAME_MOLECULE>_hprofiles.xyz`. After running them, `amg get` writes for each one a `.csv` file (position along the axis and NICS, in ppm) and a plot (`.png`).
+
+## Predi-XY: NICS-XY-scans through the rings
+
+Predi-XY (see [Methods and references](methods.md)) builds horizontal profiles that **go through the center of the rings** of polycyclic systems, following a path of adjacent rings, instead of the fixed Cartesian axes of the NICS-XY-scan. The path can be chosen automatically or by hand. It is activated in the same `BEGIN_HP` block, with `PREDI_XY YES`, and it can be used alone or together with the NICS-XY-scan.
+
 ### Input format
 
 ```text
@@ -256,7 +340,7 @@ NAME_MOLECULE             mol
 PROGRAM                   Gaussian            # ORCA or GAUSSIAN
 KEYWORD_LINE              Functional/Basis NMR INTEGRAL(SUPERFINEGRID) SCF=XQC
 
-PROCS                     16 # If you use ORCA, this value doesn't appear in the input files
+PROCS                     16 # Only used for Gaussian; for ORCA, set the number of processors in BEGIN_ORCA_BLOCK
 MEMORY_GB                 32
 
 CHARGE                    0
@@ -265,35 +349,74 @@ MULTIPLICITY              1
 MOLECULAR_COORDINATES     mol.xyz
 PSEUDO_PI                 NO              # YES or NO
 
-
 # --------------------------------
-# Module Switchboard
+# Predi-XY
 # --------------------------------
-# Turn ON only what you need.
 
-GRID_MODULE                OFF
-PROFILE_MODULE             OFF
-NICS_SCAN_XY_MODULE        ON
+BEGIN_HP
 
-# --------------------------------
-# NICS Scan XY (Transversal scan)
-# --------------------------------
-# Required if NICS_SCAN_XY_MODULE = ON
-#
-# If both POINTS and DELTA_X are defined:
-#   Code checks consistency. If inconsistent → error.
+PREDI_XY          YES
+PREDI_XY_PATH     AUTO          # AUTO, or numbers of the rings, in order
+HEIGHT            0.0 1.0 1.7   # Heights above the molecular plane (Å)
+BATCH_SIZE        80            # Maximum number of ghost atoms per input file
 
-BEGIN_NICS_SCAN_XY
-
-POINTS        81
-MARGIN        2.0
-HEIGHT        0.0 1.0 1.5
-DELTA_X       0.1
-
-MAKE_AXIS_Y   YES            # YES or NO
-
-END_NICS_SCAN_XY
+END_HP
 ```
+
+| Keyword | Description | Default |
+|---------|-------------|---------|
+| `PREDI_XY` | `YES` to build the Predi-XY profiles | `NO` |
+| `PREDI_XY_PATH` | `AUTO`, or the numbers of the rings of the path, in order (see below). The line can be repeated to define several paths | `AUTO` |
+| `HEIGHT` | One or more heights (Å) above the molecular plane | `1.0` |
+| `BATCH_SIZE` | Maximum number of ghost atoms in each input file. The points of a path are divided in several inputs if they exceed it | `80` |
+
+### Automatic path
+
+With `PREDI_XY_PATH AUTO` the program finds the path from one terminal ring to the other. This works only for **linear catacondensed** systems (such as naphthalene or anthracene), which have exactly two terminal rings. For branched or pericondensed systems (such as pyrene or coronene) the program stops with an error and asks for a manual path.
+
+### Manual path
+
+1. Run the command that draws the numbered rings:
+
+    ```text
+    amg rings
+    ```
+
+    It saves the image `<NAME_MOLECULE>_rings.png`, in which each ring has a number (starting at 0), and it prints the center of every ring and its atoms.
+
+2. Look at the image and write the sequence of rings that you want in the input, in the order of the path:
+
+    ```text
+    PREDI_XY_PATH     0 1 3
+    ```
+
+    Consecutive rings must be neighbors (they must share atoms), and no ring can be repeated. If not, the program stops and says which rings are not adjacent.
+
+3. To compare several paths, repeat the line. Each path is calculated and plotted separately, and `amg get` also draws a plot with all of them superimposed:
+
+    ```text
+    PREDI_XY_PATH     0 1 3
+    PREDI_XY_PATH     0 2 3
+    ```
+
+The profile goes through the center of each ring of the path and through the midpoint of the bond that consecutive rings share, and it extends to the outer edge of the first and last rings. The points are separated by 0.1 Å.
+
+### Results
+
+`amg run` creates the input files (`<NAME_MOLECULE>_prediXY_h1p00_b0000`, ...; with `_p00`, `_p01`, ... after `prediXY` if there are several paths), the file `<NAME_MOLECULE>_prediXY.xyz` with the ghost atoms, and a file with the data of the path that `amg get` needs later. After running Gaussian or ORCA with all the inputs, use:
+
+```text
+amg get
+```
+
+For each path and height it writes a `.csv` file (distance along the path and NICS, in ppm) and a plot (`.png`), and a 3D plot of the NICS over the structure of the molecule (`<NAME_MOLECULE>_prediXY_3D.png`). With the `--interactive` option it also writes interactive plots in `.html` format, including the 3D one, that you can open in a browser and rotate:
+
+```text
+amg get --interactive
+```
+
+!!! note
+    The vertical profiles, the NICS-XY-scan and Predi-XY are defined in the same `INPUT.txt` and can be calculated at the same time, but `BEGIN_GRID` cannot be combined with any of them.
 
 ## Pseudo-π model
 
@@ -441,9 +564,9 @@ Use the same file at every step of the workflow (`amg run`, then `amg get`, etc.
 | Command | Description |
 |---------|-------------|
 | `amg run [INPUT]` | Generates the quantum chemistry input files from `INPUT.txt` (or from the file `INPUT`, if one is given) |
-| `amg get [INPUT]` | Reads the outputs and generates the `.csv` files, plots and integrals; the `--interactive` option launches the interactive mode of the NICS-XY-scan (Predi-XY) analysis |
+| `amg get [INPUT]` | Reads the outputs and generates the `.csv` files, plots and integrals; the `--interactive` option also writes interactive `.html` plots for Predi-XY |
 | `amg mo [INPUT]` | Performs the molecular orbital decomposition analysis (Gaussian and grid module only) |
-| `amg rings [INPUT]` | Shows an image with the ring numbering (for `PREDI_XY_PATH`) |
+| `amg rings [INPUT]` | Saves an image with the ring numbering (`<NAME_MOLECULE>_rings.png`) to choose `PREDI_XY_PATH` |
 | `amg reset` | Removes the files generated by a previous run |
 | `amg check` | Verifies that the Gaussian or ORCA calculations finished correctly |
 | `amg add <f1> <f2>` | Adds two scalar fields saved in `.cube` or `.vtk` files (both files must be of the same type) |

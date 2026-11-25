@@ -580,7 +580,7 @@ def _plot_predixy_overlay(name, all_collected, interactive=False):
     collected     : list of (h, dist, nics)
     One subplot per unique height; all paths drawn on each subplot.
     """
-    all_heights = sorted({h for _, col in all_collected for h, _, _ in col})
+    all_heights = sorted({item[0] for _, col in all_collected for item in col})
 
     for h in all_heights:
         h_tag  = f"h{h:.2f}".replace(".", "p")
