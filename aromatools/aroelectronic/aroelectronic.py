@@ -3,6 +3,7 @@
 import os
 import sys
 import math
+import time
 import warnings
 import numpy as np
 import networkx as nx
@@ -34,6 +35,9 @@ BANNER = r"""
    BOA       Bond-order alternation (and BOAc)
    DI        Delocalization indices of the ring bonds
    POPULATIONS  Atomic populations of the ring atoms
+
+ All the results are written in a .txt file; CSV YES also writes one .csv file per index
+ and partition.
 
  Three calculation modes:
    • PySCF (from scratch): provide xyz + functional + basis set
@@ -328,11 +332,12 @@ def _write_txt(name, done, data, wf_file, xyz_file, rings,
         lines.append("=" * 60)
         lines.extend(summary_lines)
 
-    lines.append("")
-    lines.append("Output files")
-    lines.append("-" * 30)
-    for f in csv_files:
-        lines.append(f"  {f}")
+    if csv_files:
+        lines.append("")
+        lines.append("Output files")
+        lines.append("-" * 30)
+        for f in csv_files:
+            lines.append(f"  {f}")
     lines.append("")
     lines.append("=" * 60)
 
@@ -454,14 +459,17 @@ def _summary_table(done, rings, flags):
     rows = []
     for part, esi in done:
         for i, (r, ind) in enumerate(zip(rings, esi.indicators)):
+            # ESIpy computes each index the first time it is read (the MCI is very expensive in
+            # large rings), so only the requested ones are read.
             vals = {}
-            vals["Iring"] = getattr(ind, "iring", None)
-            vals["MCI"]   = getattr(ind, "mci", None)
-            vals["PDI"]   = getattr(ind, "pdi", None)
-            vals["FLU"]   = getattr(ind, "flu", None)
-            vals["AV1245"], vals["AVmin"] = _av_values(ind, r)
-            vals["BOA"]   = getattr(ind, "boa", None)
-            vals["BOAc"]  = getattr(ind, "boa_c", None)
+            if want_iring:  vals["Iring"] = getattr(ind, "iring", None)
+            if want_mci:    vals["MCI"]   = getattr(ind, "mci", None)
+            if want_pdi:    vals["PDI"]   = getattr(ind, "pdi", None)
+            if want_flu:    vals["FLU"]   = getattr(ind, "flu", None)
+            if want_av1245: vals["AV1245"], vals["AVmin"] = _av_values(ind, r)
+            if want_boa:
+                vals["BOA"]  = getattr(ind, "boa", None)
+                vals["BOAc"] = getattr(ind, "boa_c", None)
             rows.append((part, i + 1, "-".join(str(a) for a in r), *(_fmt(vals[c]) for c in cols)))
     return cols, rows
 
@@ -474,6 +482,11 @@ def _summary_lines(cols, rows):
 
 
 def run(input_path=None):
+    try:
+        sys.stdout.reconfigure(line_buffering=True)   # show the progress at once, also in queues or redirected output
+    except Exception:
+        pass
+    t_start = time.perf_counter()
     print(BANNER)
 
     input_path = _find_input(input_path)
@@ -496,6 +509,7 @@ def run(input_path=None):
     want_boa    = _truthy(data.get("BOA",    "NO"))
     want_di     = _truthy(data.get("DI",     "NO"))
     want_pop    = _truthy(data.get("POPULATIONS", "NO"))
+    want_csv    = _truthy(data.get("CSV",    "NO"))
 
     if not any([want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa, want_di, want_pop]):
         raise SystemExit(
@@ -533,7 +547,9 @@ def run(input_path=None):
             mult   = int(data.get("MULTIPLICITY", 1))
             print(f"[info] Running PySCF: {data['FUNCTIONAL']}/{data['BASIS_SET']}")
             symbols, coords = _read_xyz(xyz_file)
+            t_scf = time.perf_counter()
             mol, mf = _run_pyscf(symbols, coords, data["FUNCTIONAL"], data["BASIS_SET"], charge, mult)
+            print(f"[time] PySCF calculation: {time.perf_counter() - t_scf:.1f} s")
 
     ring_raw = data.get("RING", "").strip()
     if ring_raw:
@@ -562,6 +578,8 @@ def run(input_path=None):
 
     done, failed, all_files = [], [], []
     for partition in partitions:
+        t_part = time.perf_counter()
+        print(f"\n[info] Computing partition '{partition}' (atomic overlap matrices and indices)...")
         try:
             if partition == "qtaim":
                 esi = _run_esi_qtaim(aom, rings, molinfo)
@@ -579,10 +597,12 @@ def run(input_path=None):
         print("="*50)
         _print_results(esi, rings, want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
                        want_di=want_di, want_pop=want_pop, symbols=symbols)
+        print(f"\n[time] Partition '{partition}': {time.perf_counter() - t_part:.1f} s")
 
-        all_files += _save_results(name, partition, rings, esi,
-                                   want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
-                                   want_di=want_di, want_pop=want_pop, symbols=symbols)
+        if want_csv:
+            all_files += _save_results(name, partition, rings, esi,
+                                       want_iring, want_mci, want_pdi, want_flu, want_av1245, want_boa,
+                                       want_di=want_di, want_pop=want_pop, symbols=symbols)
         done.append((partition, esi))
 
     if not done:
@@ -593,9 +613,10 @@ def run(input_path=None):
     if len(done) > 1:
         cols, rows = _summary_table(done, rings, flags)
         if cols:
-            fname = f"{name}_partitions_summary.csv"
-            _write_csv(fname, "Partition,Ring,Atoms," + ",".join(cols), rows)
-            all_files.append(fname)
+            if want_csv:
+                fname = f"{name}_partitions_summary.csv"
+                _write_csv(fname, "Partition,Ring,Atoms," + ",".join(cols), rows)
+                all_files.append(fname)
             summary_lines = _summary_lines(cols, rows)
             print(f"\n{'='*50}\n  Comparison between partitions\n{'='*50}")
             print("\n".join(summary_lines))
@@ -605,6 +626,7 @@ def run(input_path=None):
                      want_di=want_di, want_pop=want_pop, symbols=symbols, summary_lines=summary_lines)
     all_files.append(txt)
 
+    print(f"\n[time] Total: {time.perf_counter() - t_start:.1f} s")
     print(f"\n[ok] Output files:")
     for f in all_files:
         print(f"  {f}")

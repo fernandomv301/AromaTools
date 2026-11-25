@@ -22,7 +22,7 @@ AroElectronic automatically:
 - Detects the rings of the molecule (or uses the ring specified by the user)
 - Builds the AOMs with the requested partition
 - Computes the requested indices for every ring
-- Saves one `.csv` file per index and a summary `.txt` file
+- Saves all the results in a `.txt` file and, optionally (`CSV YES`), one `.csv` file per index
 
 ---
 
@@ -100,6 +100,7 @@ FUNCTIONAL            B3LYP
 BASIS_SET             aug-cc-pVDZ
 CHARGE                0
 MULTIPLICITY          1
+CSV                   YES
 
 PARTITION             meta-lowdin
 RING                  1 2 6 10 7 3
@@ -144,6 +145,7 @@ Everything after `#` on a line is ignored. Keywords are case-insensitive.
 | `ATOMICFILES_PATH` | Folder with the AIMAll `.int` files (only with `PARTITION qtaim`), see [QTAIM](#qtaim) | none |
 | `RING` | Atom numbers of **one** ring (or of any path of atoms that you want to study), **in the order to follow**, starting at 1 | all rings are detected |
 | `IRING`, `MCI`, `PDI`, `FLU`, `AV1245`, `BOA`, `DI`, `POPULATIONS` | `YES` to compute the index (`AV1245` also gives AV<sub>min</sub>, and `BOA` also gives BOAc). `DI` gives the delocalization indices of the ring bonds and `POPULATIONS` the atomic populations of the ring atoms | `NO` |
+| `CSV` | `YES` to also write the results as `.csv` files, one per requested index and partition (see [Results](#results)). The `.txt` file with all the results is always written | `NO` |
 
 At least one index must be requested.
 
@@ -193,8 +195,8 @@ AV1245                YES
 The keyword `ALL` is a shortcut for `meta-lowdin nao iao lowdin mulliken`; `qtaim` is not included in it, because it needs the AIMAll files, so write it explicitly if you want it (it can be combined with the others, see below).
 
 - The PySCF calculation (or the reading of the wavefunction file) is done **only once** and shared by all the partitions, so each additional partition only costs the construction of its atomic overlap matrices and the indices.
-- Each partition has its own `.csv` files (`benzene_meta-lowdin_iring.csv`, `benzene_nao_iring.csv`, ...), exactly as if you had run each partition separately. The results of all of them are collected in a single text file, `benzene_results.txt`, and the screen shows one block per partition.
-- When more than one partition is computed, the program also writes the file `<NAME_MOLECULE>_partitions_summary.csv` (and prints the same table on the screen) with the requested Iring, MCI, PDI, FLU, AV1245/AVmin and BOA/BOAc of every ring for every partition, so they can be compared at a glance.
+- The results of all the partitions are collected in a single text file, `benzene_results.txt`, and the screen shows one block per partition. With `CSV YES`, each partition also has its own `.csv` files (`benzene_meta-lowdin_iring.csv`, `benzene_nao_iring.csv`, ...), exactly as if you had run each partition separately.
+- When more than one partition is computed, the program prints on the screen, and writes in the `.txt` file, a table with the requested Iring, MCI, PDI, FLU, AV1245/AVmin and BOA/BOAc of every ring for every partition, so they can be compared at a glance. With `CSV YES` the same table is also saved as `<NAME_MOLECULE>_partitions_summary.csv`.
 - If a partition fails, the program prints a warning, skips it and continues with the others. If a single partition was requested, the error stops the program as usual.
 - To combine `qtaim` with other partitions, give both the data of the other partitions (`MOLECULAR_COORDINATES`, `FUNCTIONAL` and `BASIS_SET`, or `WAVEFUNCTION_FILE`) and `ATOMICFILES_PATH`. The QTAIM values come from the AIMAll calculation and the rest from the wavefunction, so make sure that both were obtained for the same geometry and level of theory.
 
@@ -246,7 +248,9 @@ When `MULTIPLICITY` is not 1, the calculation is unrestricted, and the indices, 
 
 ## Results
 
-For a molecule named `benzene` with the `meta-lowdin` partition, the program writes:
+The results of **all** the partitions are always written in a **single** text file, `<NAME_MOLECULE>_results.txt`. It summarizes the setup (mode, partitions, rings), then gives a block with all the indices of every ring for each partition and, when there are several partitions, the comparison table between them.
+
+With `CSV YES`, the program also writes one `.csv` file per requested index and partition. For a molecule named `benzene` with the `meta-lowdin` partition and all the indices requested, it writes:
 
 ```
 benzene_meta-lowdin_iring.csv
@@ -260,7 +264,7 @@ benzene_meta-lowdin_populations.csv
 benzene_results.txt
 ```
 
-The `.csv` files carry the name of the partition. If several partitions are requested, the same set of `.csv` files is written for each of them, plus `benzene_partitions_summary.csv`. The results of **all** the partitions are written in a **single** `.txt` file, `<NAME_MOLECULE>_results.txt`. Files are created only for the requested indices. The `.txt` file summarizes the setup (mode, partitions, rings), then gives a block with all the indices of every ring for each partition and, when there are several partitions, the comparison table between them. The screen output has the following format (one block per ring):
+The `.csv` files carry the name of the partition, and they are created only for the requested indices. If several partitions are requested, the same set of `.csv` files is written for each of them, plus `benzene_partitions_summary.csv` with the comparison table. Without `CSV YES` (the default), only the `.txt` file is written. The screen output has the following format (one block per ring):
 
 ```
 Ring 1: [1-2-6-10-7-3]

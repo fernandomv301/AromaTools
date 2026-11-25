@@ -362,7 +362,28 @@ Depending on the selected module, this command generates .cube files (and .vtk f
 
 The induced magnetic field (B<sup>ind</sup>) and the NICS can be split into the contributions of groups of canonical molecular orbitals (for example core, σ and π orbitals). AroMagnetic reads these contributions from the Gaussian outputs, where they are printed by the natural chemical shielding (NCS) analysis of **NBO6**, so this analysis requires Gaussian with NBO6. It is available for the **grid module**, and it produces one set of `.cube` files for each group of orbitals.
 
-**1. Define the groups of orbitals in `INPUT.txt`.** Add the NBO keywords to the `KEYWORD_LINE` and list the groups in the `BEGIN_ORBITALS` block:
+**1. Identify the molecular orbitals.** Before defining the groups, you need to know which molecular orbital is core, σ, π, etc. This is done once, in a separate Gaussian calculation of the same molecule (same geometry, functional and basis set as in the AroMagnetic calculation, without the dummy atoms), for example:
+
+```text
+%MEM=24GB
+# CAM-B3LYP GEN
+#P GFINPUT POP(FULL,NBO)
+
+Comment
+
+C M
+** Coordinates **
+```
+
+where `C M` are the charge and the multiplicity of the molecule. With `Gen`, add the definition of the basis set after the coordinates, as in any Gaussian calculation. The keywords `GFINPUT` and `POP(FULL,NBO)` make Gaussian print the basis set and all the molecular orbitals, which programs such as ChemCraft need to read and display them.
+
+Then open the output of this calculation in a molecular viewer and look at the orbitals. We recommend [ChemCraft](https://www.chemcraftprog.com/): its *Molecular orbitals to render* window lists every orbital with its number, occupation, symmetry and energy (in hartree), and the orbitals that you check there are drawn when you press *Ok*.
+
+![Molecular orbitals window of ChemCraft](images/chemcraft_mo.png){ width="60%" }
+
+Write down the number of the orbitals of each group. They are the numbers that you will use in the next step.
+
+**2. Define the groups of orbitals in `INPUT.txt`.** Add the NBO keywords to the `KEYWORD_LINE` and list the groups in the `BEGIN_ORBITALS` block:
 
 ```text
 KEYWORD_LINE    functional/basis POP=NBO6read NMR Integral(SuperFineGrid) SCF=XQC
@@ -375,20 +396,20 @@ MO_others
 END_ORBITALS
 ```
 
-- Each line `MO_<name>` defines a group of orbitals, and the numbers are the molecular orbitals, numbered as in the "Canonical MO contributions" table of the Gaussian output.
+- Each line `MO_<name>` defines a group of orbitals, and the numbers are the molecular orbitals that you identified in step 1.
 - A group without numbers (`MO_others` in the example) collects all the orbitals that you did not assign to any other group.
 - Each orbital should appear in only one group. If an orbital is listed in two groups, its contribution is counted in both.
 - The name of the group is written in capital letters in the names of the output files (`MO_pi` gives `..._PI.cube`).
 
-**2. Generate the Gaussian input files:**
+**3. Generate the Gaussian input files:**
 ```text
 amg run
 ```
 When the `KEYWORD_LINE` contains `POP=NBO6read` (or `NBOread`, `NBO7read`), `amg run` adds the NBO keylist `$NBO NCS=0.0 XYZ MO $END` at the end of every input file, after the molecule specification, followed by the blank line that Gaussian needs at the end of the input. You do not have to write it yourself. If your calculation uses a custom basis set (`Gen`), the basis set is inserted before this line.
 
-**3. Run the Gaussian calculations**, as in a normal AroMagnetic calculation.
+**4. Run the Gaussian calculations**, as in a normal AroMagnetic calculation.
 
-**4. Perform the molecular orbital analysis** in the same folder, with the same `INPUT.txt`:
+**5. Perform the molecular orbital analysis** in the same folder, with the same `INPUT.txt`:
 ```text
 amg mo
 ```
